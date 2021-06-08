@@ -34,6 +34,23 @@ ifeq ("$(BOARD)","gShield")
     DEVICE_DEFINES += SETTINGS_FILE=${SETTINGS_FILE}
 endif
 
+ifeq ("$(BOARD)","pm-robot")
+    # This is a due with a Synthetos gShield. We'll use the Due platform, but set defines
+    # for the code to get the pinout right.
+
+    # Note: we call it "g2core-due" instead of "due" since the Motate built-in provides
+    # a "due" BASE_BOARD.
+    BASE_BOARD = g2core-due
+    DEVICE_DEFINES += MOTATE_BOARD="pm-robot"
+    DEVICE_DEFINES += SETTINGS_FILE=${SETTINGS_FILE}
+endif
+
+ifeq ("$(BOARD)","pm-station")
+    BASE_BOARD = g2core-due
+    DEVICE_DEFINES += MOTATE_BOARD="pm-station"
+    DEVICE_DEFINES += SETTINGS_FILE=${SETTINGS_FILE}
+endif
+
 ifeq ("$(BOARD)","shopbotShield")
     # This is a due with a shopbot shield. We'll use the Due platform, but set defines
     # for the code to get the pinout right.

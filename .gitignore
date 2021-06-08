@@ -32,6 +32,7 @@ xcuserdata
 *.atsuo
 *.cproj
 *.log
+*.gch
 .project
 .cproject
 *.launch

@@ -332,7 +332,7 @@ static stat_t _homing_axis_latch(int8_t axis)  // drive to switch at low speed
 /***********************************************************************************
  * _homing_axis_setpoint_backoff() - backoff to zero or max setpoint position
  */
-static stat_t _homing_axis_setpoint_backoff(int8_t axis)  // 
+static stat_t _homing_axis_setpoint_backoff(int8_t axis)  //
 {
     _homing_axis_move(axis, hm.zero_backoff, hm.search_velocity);
     return (_set_homing_func(_homing_axis_set_position));
@@ -355,6 +355,7 @@ static stat_t _homing_axis_set_position(int8_t axis)
     cm_set_axis_max_jerk(axis, hm.saved_jerk);  // restore the max jerk value
 
     gpio_set_homing_mode(hm.homing_input, false);  // end homing mode
+
     return (_set_homing_func(_homing_axis_start));
 }
 
@@ -362,9 +363,9 @@ static stat_t _homing_axis_set_position(int8_t axis)
  * _homing_axis_move()       - helper that actually executes the above moves
  * _motion_end_callback()    - callback completes when motion has stopped
  */
-static void _motion_end_callback(float* vect, bool* flag) 
+static void _motion_end_callback(float* vect, bool* flag)
 {
-    hm.waiting_for_motion_end = false; 
+    hm.waiting_for_motion_end = false;
 }
 
 static stat_t _homing_axis_move(int8_t axis, float target, float velocity) {
@@ -423,6 +424,10 @@ static stat_t _homing_finalize_exit(int8_t axis)  // third part of return to hom
     cm_set_feed_rate(hm.saved_feed_rate);
     cm_set_motion_mode(MODEL, MOTION_MODE_CANCEL_MOTION_MODE);
     cm_canned_cycle_end();
+    // by hamed
+    REG_TC0_CCR0  = TC_CCR_SWTRG;
+    REG_TC2_CCR0  = TC_CCR_SWTRG;
+
     return (STAT_OK);
 }
 

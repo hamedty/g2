@@ -45,7 +45,7 @@
 //  #if (MOTORS >= 6)  will work
 
 #define MOTORS 4                    // number of motors supported the hardware
-#define PWMS 2                      // number of PWM channels supported the hardware
+#define PWMS 0                      // number of PWM channels supported the hardware
 
 /*************************
  * Global System Defines *

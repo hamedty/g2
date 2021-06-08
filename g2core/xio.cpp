@@ -357,11 +357,11 @@ struct xio_t {
             if (!DeviceWrappers[dev]->isActive()) {
                 continue;
             }
-                        
+
             // If this channel is a DATA only, skip it this pass
             if (!DeviceWrappers[dev]->isCtrl()) {
                 continue;
-            }            
+            }
             ret_buffer = DeviceWrappers[dev]->readline(DEV_IS_CTRL, size);
 
             if (size > 0) {
@@ -411,7 +411,7 @@ extern xio_t xio;
 // See here for a discussion of what this means if you are not familiar with C++
 // https://github.com/synthetos/g2/wiki/Dual-Endpoint-USB-Internals#c-classes-virtual-functions-and-inheritance
 
-// LineRXBuffer takes the Motate RXBuffer (which handles "transfers", usually DMA), 
+// LineRXBuffer takes the Motate RXBuffer (which handles "transfers", usually DMA),
 // and adds G2 line-reading semantics to it.
 template <uint16_t _size, typename owner_type, uint8_t _header_count = 8, uint16_t _line_buffer_size = RX_BUFFER_SIZE>
 struct LineRXBuffer : RXBuffer<_size, owner_type, char> {
@@ -573,8 +573,8 @@ struct LineRXBuffer : RXBuffer<_size, owner_type, char> {
      * where it left off - i.e. avoiding rescanning the entire buffer multiple times.
      *
      * _scanBuffer() returns true if it finds a control line.
-     * The control line starts at the character at _line_start_offset and includes 
-     * the characters up to _scan_offset-1. If there are multiple line-ending chars 
+     * The control line starts at the character at _line_start_offset and includes
+     * the characters up to _scan_offset-1. If there are multiple line-ending chars
      * ("\r\n" for example) _scan_offset will point to the *first* one.
      *
      * With ASCII art (where "." means "invalid data" or "don't care"):
@@ -612,12 +612,12 @@ struct LineRXBuffer : RXBuffer<_size, owner_type, char> {
      *
      * If we find a line that classifies as "control" then we return true and stop scanning.
      *
-     * We also have a constraint that we may run out of characters at any time. This is OK, 
-     * and enough state is kept that we can enter the function at any point with new 
+     * We also have a constraint that we may run out of characters at any time. This is OK,
+     * and enough state is kept that we can enter the function at any point with new
      * characters added to the RX DMA buffer and get the same results.
      *
-     * Another constraint is that lines MAY have single character commands embedded in them. 
-     * In this case we need to un-embed them. Since we may not have the end of the line yet, 
+     * Another constraint is that lines MAY have single character commands embedded in them.
+     * In this case we need to un-embed them. Since we may not have the end of the line yet,
      * we need to move the command to the beginning of the line.
      *
      * Note that _at_start_of_line means that we *just* parsed a character that is *at* the end of the line.
@@ -729,7 +729,7 @@ struct LineRXBuffer : RXBuffer<_size, owner_type, char> {
             {
                 // don't do anything
             }
-            // Classify the line if it's a single character 
+            // Classify the line if it's a single character
             else if (_at_start_of_line &&
                 ((c == '!')         ||      // feedhold
                  (c == '~')         ||      // cycle start

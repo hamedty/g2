@@ -46,6 +46,27 @@ enEncoders_t en;
 void encoder_init() {
     memset(&en, 0, sizeof(en));  // clear all values, pointers and status
     encoder_init_assertions();
+
+    // by hamed
+    // pinMode( 2, INPUT_PULLUP); PB25
+    // pinMode(13, INPUT_PULLUP); PB27
+    REG_PIOB_ODR = (1 << 25) | (1 << 27);
+
+
+    REG_PMC_PCER0 = PMC_PCER0_PID27;   // activate clock for TC0
+    REG_TC0_CMR0  = TC_CMR_TCCLKS_XC0; // select XC0 as clock source
+    REG_TC0_BMR   = TC_BMR_QDEN  | TC_BMR_POSEN | TC_BMR_EDGPHA;
+    REG_TC0_CCR0  = TC_CCR_CLKEN | TC_CCR_SWTRG;
+
+    // pinMode(4, INPUT_PULLUP); PC26
+    // pinMode(5, INPUT_PULLUP); PC25
+    REG_PIOC_ODR = (1 << 25) | (1 << 26);
+
+    REG_PMC_PCER1 = PMC_PCER1_PID33;
+    REG_TC2_CMR0  = TC_CMR_TCCLKS_XC0;
+    REG_TC2_BMR   = TC_BMR_QDEN | TC_BMR_POSEN  | TC_BMR_EDGPHA;
+    REG_TC2_CCR0  = TC_CCR_CLKEN | TC_CCR_SWTRG;
+
 }
 
 void encoder_reset() { encoder_init(); }
