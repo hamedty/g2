@@ -423,10 +423,15 @@ static stat_t _homing_finalize_exit(int8_t axis)  // third part of return to hom
     cm_set_feed_rate_mode(hm.saved_feed_rate_mode);
     cm_set_feed_rate(hm.saved_feed_rate);
     cm_set_motion_mode(MODEL, MOTION_MODE_CANCEL_MOTION_MODE);
-    cm_canned_cycle_end();
     // by hamed
+    #if ENC1_AVAILABLE
     REG_TC0_CCR0  = TC_CCR_SWTRG;
+    #endif
+
+    #if ENC2_AVAILABLE
     REG_TC2_CCR0  = TC_CCR_SWTRG;
+    #endif
+    cm_canned_cycle_end();
 
     return (STAT_OK);
 }
