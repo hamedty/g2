@@ -33,7 +33,7 @@
 #include "json_parser.h"            // so we can switch js.comm_mode on a marlin M-code
 #endif
 
-// Helpers 
+// Helpers
 
 static stat_t _execute_gcode_block_marlin(void);
 
@@ -60,7 +60,7 @@ typedef enum {                          // Used for detecting gcode errors. See 
 #define MODAL_GROUP_COUNT (MODAL_GROUP_M9+1)
 // Note 1: Our G0 omits G4,G30,G53,G92.1,G92.2,G92.3 as these have no axis components to error check
 
-/* The difference between NextAction and MotionMode (in canonical machine) is that 
+/* The difference between NextAction and MotionMode (in canonical machine) is that
 *  NextAction is used by the current block, and may carry non-modal commands, whereas
  * MotionMode persists across blocks (as G modal group 1)
  */
@@ -74,6 +74,7 @@ typedef enum {                                  // these are in order to optimiz
     NEXT_ACTION_SEARCH_HOME,                    // G28.2 homing cycle
     NEXT_ACTION_SET_ABSOLUTE_ORIGIN,            // G28.3 origin set
     NEXT_ACTION_HOMING_NO_SET,                  // G28.4 homing cycle with no coordinate setting
+    NEXT_ACTION_RESET_ENCODERS,                 // G28.5 reset encoders
     NEXT_ACTION_GOTO_G30_POSITION,              // G30 go to machine position
     NEXT_ACTION_SET_G30_POSITION,               // G30.1 set position in abs coordinates
     NEXT_ACTION_STRAIGHT_PROBE_ERR,             // G38.2
@@ -137,7 +138,7 @@ typedef struct GCodeInputValue {    // Gcode inputs - meaning depends on context
     uint8_t arc_distance_mode;      // G90.1=use absolute IJK offsets, G91.1=incremental IJK offsets
     uint8_t origin_offset_mode;     // G92...TRUE=in origin offset mode
     uint8_t absolute_override;      // G53 TRUE = move using machine coordinates - this block only (G53)
-    
+
     uint8_t tool;                   // Tool after T and M6 (tool_select and tool_change)
     uint8_t tool_select;            // T value - T sets this value
     uint8_t tool_change;            // M6 tool change flag - moves "tool_select" to "tool"
@@ -197,7 +198,7 @@ typedef struct GCodeFlags {         // Gcode input flags
     bool fro_control;
     bool tro_control;
     bool spo_control;
-    
+
     bool checksum;
 
 #if MARLIN_COMPAT_ENABLED == true
@@ -692,6 +693,7 @@ static stat_t _parse_gcode_block(char *buf, char *active_comment)
                         case 2: SET_NON_MODAL (next_action, NEXT_ACTION_SEARCH_HOME);
                         case 3: SET_NON_MODAL (next_action, NEXT_ACTION_SET_ABSOLUTE_ORIGIN);
                         case 4: SET_NON_MODAL (next_action, NEXT_ACTION_HOMING_NO_SET);
+                        case 5: SET_NON_MODAL (next_action, NEXT_ACTION_RESET_ENCODERS);
                         default: status = STAT_GCODE_COMMAND_UNSUPPORTED;
                     }
                     break;
@@ -866,7 +868,7 @@ static stat_t _parse_gcode_block(char *buf, char *active_comment)
             case 'L': SET_NON_MODAL (L_word, value);
             case 'R': SET_NON_MODAL (arc_radius, value);
             case 'N': SET_NON_MODAL (linenum, value_int);           // line number handled as special case to preserve integer value
-            
+
 #if MARLIN_COMPAT_ENABLED == true
             case 'E': SET_NON_MODAL (E_word, value);                // extruder value
 #endif
@@ -929,7 +931,7 @@ stat_t _execute_gcode_block(char *active_comment)
     if (gf.linenum) {
         cm_set_model_linenum(gv.linenum);
     }
-        
+
     EXEC_FUNC(cm_m48_enable, m48_enable);
 
     if (gf.fro_control) {                                   // feedrate override
@@ -949,7 +951,7 @@ stat_t _execute_gcode_block(char *active_comment)
     if (gf.linenum && gf.checksum) {
         ritorno(cm_check_linenum());
     }
-        
+
     EXEC_FUNC(spindle_speed_sync, S_word);                  // S
     EXEC_FUNC(cm_select_tool, tool_select);                 // T - tool_select is where it's written
     EXEC_FUNC(cm_change_tool, tool_change);                 // M6 - is where it's effected
@@ -1008,6 +1010,7 @@ stat_t _execute_gcode_block(char *active_comment)
         case NEXT_ACTION_SEARCH_HOME:         { status = cm_homing_cycle_start(gv.target, gf.target); break;}       // G28.2
         case NEXT_ACTION_SET_ABSOLUTE_ORIGIN: { status = cm_set_absolute_origin(gv.target, gf.target); break;}      // G28.3
         case NEXT_ACTION_HOMING_NO_SET:       { status = cm_homing_cycle_start_no_set(gv.target, gf.target); break;}// G28.4
+        case NEXT_ACTION_RESET_ENCODERS:       { status = cm_reset_encoders(); break;}// G28.5
 
         case NEXT_ACTION_STRAIGHT_PROBE_ERR:     { status = cm_straight_probe(gv.target, gf.target, true, true); break;}  // G38.2
         case NEXT_ACTION_STRAIGHT_PROBE:         { status = cm_straight_probe(gv.target, gf.target, true, false); break;} // G38.3
@@ -1026,7 +1029,7 @@ stat_t _execute_gcode_block(char *active_comment)
         case NEXT_ACTION_JSON_COMMAND_SYNC:       { status = cm_json_command(active_comment); break;}               // M100.0
         case NEXT_ACTION_JSON_COMMAND_ASYNC:      { status = cm_json_command_immediate(active_comment); break;}     // M100.1
         case NEXT_ACTION_JSON_WAIT:               { status = cm_json_wait(active_comment); break;}                  // M101
-        
+
         case NEXT_ACTION_DEFAULT: {
             cm_set_absolute_override(MODEL, gv.absolute_override); // apply absolute override & display as absolute
             switch (gv.motion_mode) {
@@ -1100,7 +1103,7 @@ static stat_t _execute_gcode_block_marlin()
     // Deal with E
     if (gf.marlin_relative_extruder_mode) {                 // M82, M83
         marlin_set_extruder_mode(gv.marlin_relative_extruder_mode);
-    }    
+    }
     if (gf.E_word) {
         // Ennn T0 -> Annn
         if (cm->gm.tool_select == 1) {

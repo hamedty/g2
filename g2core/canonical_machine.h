@@ -120,7 +120,7 @@ typedef enum {                      // feedhold type parameter
     FEEDHOLD_TYPE_SCRAM             // feedhold at high jerk and stop all active devices
 } cmFeedholdType;
 
-typedef enum {                      // feedhold final operation 
+typedef enum {                      // feedhold final operation
     FEEDHOLD_EXIT_CYCLE = 0,        // exit feedhold with cycle restart
     FEEDHOLD_EXIT_FLUSH,            // exit feedhold with flush
     FEEDHOLD_EXIT_STOP,             // perform program stop
@@ -141,7 +141,7 @@ typedef enum {                      // feedhold state machine
     FEEDHOLD_MOTION_STOPPING,       // waiting for motors to have stopped at hold point (motion stop)
     FEEDHOLD_MOTION_STOPPED,        // motion has stopped at hold point
     FEEDHOLD_HOLD_ACTIONS_PENDING,  // wait for feedhold actions to complete
-    FEEDHOLD_HOLD_ACTIONS_COMPLETE, // 
+    FEEDHOLD_HOLD_ACTIONS_COMPLETE, //
     FEEDHOLD_HOLD,                  // HOLDING (steady state)
     FEEDHOLD_EXIT_ACTIONS_PENDING,  // performing exit actions
     FEEDHOLD_EXIT_ACTIONS_COMPLETE  // completed exit actions
@@ -189,7 +189,7 @@ typedef enum {                      // feed override state machine
 typedef enum {                      // job kill state machine
     JOB_KILL_OFF = 0,
     JOB_KILL_REQUESTED,
-    JOB_KILL_RUNNING    
+    JOB_KILL_RUNNING
 } cmJobKillState;
 
 /*****************************************************************************
@@ -303,7 +303,7 @@ typedef struct cmMachine {                  // struct to manage canonical machin
     uint8_t limit_requested;                // set non-zero to request limit switch processing (value is input number)
     uint8_t shutdown_requested;             // set non-zero to request shutdown in support of external estop (value is input number)
     bool deferred_write_flag;               // G10 data has changed (e.g. offsets) - flag to persist them
-    
+
     bool safety_interlock_enable;           // true to enable safety interlock system
     bool request_interlock;                 // enter interlock
     bool request_interlock_exit;            // exit interlock
@@ -472,7 +472,7 @@ void cm_reset_overrides(void);
 stat_t cm_m48_enable(uint8_t enable);                           // M48, M49
 stat_t cm_fro_control(const float P_word, const bool P_flag);   // M50
 stat_t cm_tro_control(const float P_word, const bool P_flag);   // M50.1
-// See spindle.cpp for cm_spo_control()                         // M51        
+// See spindle.cpp for cm_spo_control()                         // M51
 
 // Program Functions (4.3.10)
 void cm_cycle_start(void);                                      // (no Gcode)
@@ -506,6 +506,7 @@ bool cm_has_hold(void);                                         // has hold in p
 stat_t cm_homing_cycle_start(const float axes[], const bool flags[]);        // G28.2
 stat_t cm_homing_cycle_start_no_set(const float axes[], const bool flags[]); // G28.4
 stat_t cm_homing_cycle_callback(void);                          // G28.2/.4 main loop callback
+stat_t cm_reset_encoders();        // G28.5
 
 // Probe cycles
 stat_t cm_straight_probe(float target[], bool flags[],          // G38.x
