@@ -51,6 +51,12 @@ ifeq ("$(BOARD)","pm-station")
     DEVICE_DEFINES += SETTINGS_FILE=${SETTINGS_FILE}
 endif
 
+ifeq ("$(BOARD)","pm-feeder")
+    BASE_BOARD = g2core-due
+    DEVICE_DEFINES += MOTATE_BOARD="pm-feeder"
+    DEVICE_DEFINES += SETTINGS_FILE=${SETTINGS_FILE}
+endif
+
 ifeq ("$(BOARD)","shopbotShield")
     # This is a due with a shopbot shield. We'll use the Due platform, but set defines
     # for the code to get the pinout right.

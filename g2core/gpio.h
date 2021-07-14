@@ -37,7 +37,11 @@
 
 #define D_IN_CHANNELS       9  // v9    // number of digital inputs supported
 //#define D_OUT_CHANNELS    13          // number of digital outputs supported
+#ifdef FEEDER
+#define D_OUT_CHANNELS	    14           // number of digital outputs supported
+#else
 #define D_OUT_CHANNELS	    9           // number of digital outputs supported
+#endif
 #define A_IN_CHANNELS	    0           // number of analog inputs supported
 #define A_OUT_CHANNELS	    0           // number of analog outputs supported
 
@@ -81,7 +85,7 @@ typedef enum {                          // actions are initiated from within the
     INPUT_ACTION_PANIC,                 // initiate a panic. stops everything immediately - does not preserve position
     INPUT_ACTION_RESET                  // reset system
 } inputAction;
-#define INPUT_ACTION_MAX    INPUT_ACTION_RESET 
+#define INPUT_ACTION_MAX    INPUT_ACTION_RESET
 
 typedef enum {                          // functions are requested from the ISR, run from the main loop
     INPUT_FUNCTION_NONE = 0,

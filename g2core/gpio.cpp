@@ -301,6 +301,9 @@ static PWMOutputPin<kOutput13_PinNumber>  output_13_pin {kNormal, 200000};
 #else
 static PWMLikeOutputPin<kOutput13_PinNumber>  output_13_pin;
 #endif
+#ifdef FEEDER
+static PWMLikeOutputPin<kOutput14_PinNumber>  output_14_pin;
+#endif
 // END generated
 
 /************************************************************************************
@@ -331,6 +334,9 @@ void gpio_init(void)
     output_11_pin.setFrequency(200000);
     output_12_pin.setFrequency(200000);
     output_13_pin.setFrequency(200000);
+#ifdef FEEDER
+    output_14_pin.setFrequency(200000);
+#endif
     // END generated
 
     return(gpio_reset());
@@ -377,6 +383,10 @@ void outputs_reset(void) {
 #if D_OUT_CHANNELS >= 13
     if (d_out[13-1].mode != IO_MODE_DISABLED) { (output_13_pin   = (d_out[13-1].mode == IO_ACTIVE_LOW) ? 1.0 : 0.0); }
 #endif
+#if D_OUT_CHANNELS >= 14
+    if (d_out[14-1].mode != IO_MODE_DISABLED) { (output_14_pin   = (d_out[14-1].mode == IO_ACTIVE_LOW) ? 1.0 : 0.0); }
+#endif
+
 }
 
 void inputs_reset(void) {
@@ -456,7 +466,7 @@ void  gpio_set_probing_mode(const uint8_t input_num_ext, const bool is_probing)
     d_in[input_num_ext-1].probing_mode = is_probing;
 }
 
-int8_t gpio_get_probing_input(void) 
+int8_t gpio_get_probing_input(void)
 {
     for (uint8_t i = 0; i <= D_IN_CHANNELS; i++) {
         if (d_in[i-1].function == INPUT_FUNCTION_PROBE) {
@@ -503,6 +513,9 @@ stat_t gpio_set_output(uint8_t output_num, float value) {
           case 11:  { output_11_pin = value; } break;
           case 12:  { output_12_pin = value; } break;
           case 13:  { output_13_pin = value; } break;
+#ifdef FEEDER
+          case 14:  { output_14_pin = value; } break;
+#endif
           // END generated
           default: { value = 0; } // inactive
       }
@@ -523,10 +536,10 @@ stat_t gpio_set_output(uint8_t output_num, float value) {
 
 static uint8_t _io(const index_t index)
 {
-    const char *ptr = cfgArray[index].token; 
-    
+    const char *ptr = cfgArray[index].token;
+
     do {
-        if (isdigit(*ptr)) { 
+        if (isdigit(*ptr)) {
             return (atoi(ptr)-1);   // need to reduce by 1 for internal 0-based arrays
         }
     } while (++ptr != NUL);
@@ -543,7 +556,7 @@ static uint8_t _io(const index_t index)
  * io_set_fn() - set input function
  */
 stat_t io_get_mo(nvObj_t *nv) { return(get_integer(nv, d_in[_io(nv->index)].mode)); }
-stat_t io_set_mo(nvObj_t *nv) 
+stat_t io_set_mo(nvObj_t *nv)
 {
     ritorno(set_integer(nv, (uint8_t &)d_in[_io(nv->index)].mode, 0, IO_MODE_MAX));
     if (cm_get_machine_state() != MACHINE_INITIALIZING) {
@@ -553,7 +566,7 @@ stat_t io_set_mo(nvObj_t *nv)
 }
 
 stat_t io_get_ac(nvObj_t *nv) { return(get_integer(nv, d_in[_io(nv->index)].action)); }
-stat_t io_set_ac(nvObj_t *nv) 
+stat_t io_set_ac(nvObj_t *nv)
 {
     ritorno(set_integer(nv, (uint8_t &)d_in[_io(nv->index)].action, 0, INPUT_ACTION_MAX));
     if (cm_get_machine_state() != MACHINE_INITIALIZING) {
@@ -563,7 +576,7 @@ stat_t io_set_ac(nvObj_t *nv)
 }
 
 stat_t io_get_fn(nvObj_t *nv) { return(get_integer(nv, d_in[_io(nv->index)].function)); }
-stat_t io_set_fn(nvObj_t *nv) 
+stat_t io_set_fn(nvObj_t *nv)
 {
     ritorno(set_integer(nv, (uint8_t &)d_in[_io(nv->index)].function, 0, INPUT_FUNCTION_MAX));
     if (cm_get_machine_state() != MACHINE_INITIALIZING) {
@@ -606,6 +619,9 @@ stat_t io_set_domode(nvObj_t *nv)           // output function
         case 11: if (output_11_pin.isNull()) { nv->value_int = IO_MODE_DISABLED; } break;
         case 12: if (output_12_pin.isNull()) { nv->value_int = IO_MODE_DISABLED; } break;
         case 13: if (output_13_pin.isNull()) { nv->value_int = IO_MODE_DISABLED; } break;
+#ifdef FEEDER
+        case 14: if (output_14_pin.isNull()) { nv->value_int = IO_MODE_DISABLED; } break;
+#endif
         default: {}
     }
 
@@ -629,7 +645,7 @@ stat_t io_get_output(nvObj_t *nv)
     } else {
         nv->valuetype = TYPE_FLOAT;
         nv->precision = 2;
-        
+
         switch (output_num+1) {                 // add 1 to get logical pin numbers
             case 1:  { nv->value_flt = (float)output_1_pin; } break;
             case 2:  { nv->value_flt = (float)output_2_pin; } break;
@@ -644,6 +660,9 @@ stat_t io_get_output(nvObj_t *nv)
             case 11: { nv->value_flt = (float)output_11_pin; } break;
             case 12: { nv->value_flt = (float)output_12_pin; } break;
             case 13: { nv->value_flt = (float)output_13_pin; } break;
+#ifdef FEEDER
+            case 14: { nv->value_flt = (float)output_14_pin; } break;
+#endif
             default: { nv->valuetype = TYPE_NULL;  }    // reports back as NULL
         }
         if (outMode == IO_ACTIVE_LOW) {

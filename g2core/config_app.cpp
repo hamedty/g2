@@ -98,7 +98,7 @@ static stat_t get_tick(nvObj_t *nv);        // get system tick count
  *  - The precision value 'p' only affects JSON responses. You need to also set
  *    the %f in the corresponding format string to set text mode display precision
  *
- *  - Unit conversions are now conditional, and handled by convert_incoming_float() 
+ *  - Unit conversions are now conditional, and handled by convert_incoming_float()
  *    and convert_outgoing_float(). Apply conversion flags to all axes, not just linear,
  *    as rotary axes may be treated as linear if in radius mode, so the flag is needed.
  */
@@ -519,6 +519,9 @@ const cfgItem_t cfgArray[] = {
     { "do11","do11mo",_iip, 0, io_print_domode, io_get_domode, io_set_domode, nullptr, DO11_MODE },
     { "do12","do12mo",_iip, 0, io_print_domode, io_get_domode, io_set_domode, nullptr, DO12_MODE },
     { "do13","do13mo",_iip, 0, io_print_domode, io_get_domode, io_set_domode, nullptr, DO13_MODE },
+#ifdef FEEDER
+    { "do14","do14mo",_iip, 0, io_print_domode, io_get_domode, io_set_domode, nullptr, DO14_MODE },
+#endif
 
     // Digital output state readers (default to non-active)
     { "out","out1",  _i0, 2, io_print_out, io_get_output, io_set_output, nullptr, 0 },
@@ -533,6 +536,10 @@ const cfgItem_t cfgArray[] = {
     { "out","out10", _i0, 2, io_print_out, io_get_output, io_set_output, nullptr, 0 },
     { "out","out11", _i0, 2, io_print_out, io_get_output, io_set_output, nullptr, 0 },
     { "out","out12", _i0, 2, io_print_out, io_get_output, io_set_output, nullptr, 0 },
+#ifdef FEEDER
+    { "out","out13", _i0, 2, io_print_out, io_get_output, io_set_output, nullptr, 0 },
+    { "out","out14", _i0, 2, io_print_out, io_get_output, io_set_output, nullptr, 0 },
+#endif
 
     // PWM settings
     { "p1","p1frq",_fip, 0, pwm_print_p1frq, get_flt, pwm_set_pwm,(float *)&pwm.c[PWM_1].frequency,    P1_PWM_FREQUENCY },
@@ -1305,7 +1312,7 @@ const cfgItem_t cfgArray[] = {
     { "","di7", _f0, 0, tx_print_nul, get_grp, set_grp, nullptr, 0 },
     { "","di8", _f0, 0, tx_print_nul, get_grp, set_grp, nullptr, 0 },
     { "","di9", _f0, 0, tx_print_nul, get_grp, set_grp, nullptr, 0 },
-        
+
 #define DIGITAL_OUT_GROUPS 14
     { "","out", _f0, 0, tx_print_nul, get_grp, set_grp, nullptr, 0 },   // output state
     { "","do1", _f0, 0, tx_print_nul, get_grp, set_grp, nullptr, 0 },   // output configs
@@ -1332,7 +1339,7 @@ const cfgItem_t cfgArray[] = {
     { "","g92",_f0, 0, tx_print_nul, get_grp, set_grp, nullptr, 0 },    // origin offsets
     { "","g28",_f0, 0, tx_print_nul, get_grp, set_grp, nullptr, 0 },    // g28 home position
     { "","g30",_f0, 0, tx_print_nul, get_grp, set_grp, nullptr, 0 },    // g30 home position
-        
+
 #define TOOL_OFFSET_GROUPS 33
     { "","tof",_f0, 0, tx_print_nul, get_grp, set_grp, nullptr, 0 },    // current tool offsets
     { "","tt1",_f0, 0, tx_print_nul, get_grp, set_grp, nullptr, 0 },    // tt offsets
@@ -1367,7 +1374,7 @@ const cfgItem_t cfgArray[] = {
     { "","tt30",_f0, 0, tx_print_nul, get_grp, set_grp, nullptr, 0 },   // tt offsets
     { "","tt31",_f0, 0, tx_print_nul, get_grp, set_grp, nullptr, 0 },   // tt offsets
     { "","tt32",_f0, 0, tx_print_nul, get_grp, set_grp, nullptr, 0 },   // tt offsets
-        
+
 #define MACHINE_STATE_GROUPS 8
     { "","mpo",_f0, 0, tx_print_nul, get_grp, set_grp, nullptr, 0 },    // machine position group
     { "","pos",_f0, 0, tx_print_nul, get_grp, set_grp, nullptr, 0 },    // work position group
@@ -1449,23 +1456,23 @@ bool nv_index_lt_groups(index_t index) { return ((index <= NV_INDEX_START_GROUPS
  * convert_outgoing_float() - pre-process an outgoing floating point number for units display
  *
  *  Incoming floats are destined for SET operations.
- *  Outgoing floats are the raw values from GET operations, destined for text or JSON display. 
+ *  Outgoing floats are the raw values from GET operations, destined for text or JSON display.
  *
  *  Apologies in advance for these twisty little functions. These functions are used to
  *  convert incoming floats into the native, canonical form of a parameter (mm, or whatever)
- *  and outgoing floats into a display format appropriate to the units mode in effect. 
- *  They use the flags in the config table and other cues to determine what type of conversion 
- *  to perform. 
+ *  and outgoing floats into a display format appropriate to the units mode in effect.
+ *  They use the flags in the config table and other cues to determine what type of conversion
+ *  to perform.
  *
- *  The conversions are complicated by the fact that only linear axes actually convert - 
- *  rotaries do not - unless they are in radius mode. Plus, determining the axis for a motor 
- *  requires unraveling the motor mapping (handled in cm_get_axis_type()). Also, there are 
- *  global SYS group values that are not associated with any axis. Lastly, the 
- *  steps-per-unit value (1su) is actually kept in inverse conversion form, as its native 
+ *  The conversions are complicated by the fact that only linear axes actually convert -
+ *  rotaries do not - unless they are in radius mode. Plus, determining the axis for a motor
+ *  requires unraveling the motor mapping (handled in cm_get_axis_type()). Also, there are
+ *  global SYS group values that are not associated with any axis. Lastly, the
+ *  steps-per-unit value (1su) is actually kept in inverse conversion form, as its native
  *  form would be units-per-step.
  */
 
-static void _convert(nvObj_t *nv, float conversion_factor) 
+static void _convert(nvObj_t *nv, float conversion_factor)
 {
     if (nv->valuetype != TYPE_FLOAT) { return; } // can be called non-destructively for any value type
     if (isnan((double)nv->value_flt) || isinf((double)nv->value_flt)) { return; } // trap illegal float values
@@ -1476,12 +1483,12 @@ static void _convert(nvObj_t *nv, float conversion_factor)
         if ((axis_type == AXIS_TYPE_LINEAR) || (axis_type == AXIS_TYPE_SYSTEM)) {
             if (cfgArray[nv->index].flags & F_CONVERT) {    // standard units conversion
                     nv->value_flt *= conversion_factor;
-            } else                     
+            } else
             if (cfgArray[nv->index].flags & F_ICONVERT) {   // inverse units conversion
                 nv->value_flt /= conversion_factor;
             }
         }
-    }  
+    }
     nv->precision = GET_TABLE_WORD(precision);
     nv->valuetype = TYPE_FLOAT;
 }
@@ -1544,7 +1551,7 @@ stat_t set_float_range(nvObj_t *nv, float &value, float low, float high) {
  */
 
 static stat_t _set_int_tests(nvObj_t *nv, int32_t low, int32_t high)
-{    
+{
     char msg[64];
 
     if (nv->value_int < low) {
@@ -1562,14 +1569,14 @@ static stat_t _set_int_tests(nvObj_t *nv, int32_t low, int32_t high)
     return (STAT_OK);
 }
 
-stat_t get_integer(nvObj_t *nv, const int32_t value) 
+stat_t get_integer(nvObj_t *nv, const int32_t value)
 {
     nv->value_int = value;
     nv->valuetype = TYPE_INTEGER;
     return STAT_OK;
 }
 
-stat_t set_integer(nvObj_t *nv, uint8_t &value, uint8_t low, uint8_t high) 
+stat_t set_integer(nvObj_t *nv, uint8_t &value, uint8_t low, uint8_t high)
 {
     ritorno(_set_int_tests(nv, low, high))
     value = nv->value_int;
@@ -1577,7 +1584,7 @@ stat_t set_integer(nvObj_t *nv, uint8_t &value, uint8_t low, uint8_t high)
     return (STAT_OK);
 }
 
-stat_t set_int32(nvObj_t *nv, int32_t &value, int32_t low, int32_t high) 
+stat_t set_int32(nvObj_t *nv, int32_t &value, int32_t low, int32_t high)
 {
     ritorno(_set_int_tests(nv, low, high))
     value = nv->value_int;  // note: valuetype = TYPE_INT already set

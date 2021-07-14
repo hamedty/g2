@@ -129,8 +129,8 @@
 #define FEEDHOLD_Z_LIFT             0       // {zl: mm to lift Z on feedhold
 #endif
 
-#ifndef PROBE_REPORT_ENABLE 
-#define PROBE_REPORT_ENABLE         true    // {prbr: 
+#ifndef PROBE_REPORT_ENABLE
+#define PROBE_REPORT_ENABLE         true    // {prbr:
 #endif
 
 #ifndef MANUAL_FEEDRATE_OVERRIDE_ENABLE
@@ -1038,6 +1038,10 @@
 
 #ifndef DO13_MODE
 #define DO13_MODE                   IO_ACTIVE_HIGH
+#endif
+
+#ifndef DO14_MODE
+#define DO14_MODE                   IO_ACTIVE_HIGH
 #endif
 
 // *** PWM Settings *** //
