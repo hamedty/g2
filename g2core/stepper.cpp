@@ -39,12 +39,13 @@
 #include "util.h"
 #include "controller.h"
 #include "xio.h"
+// #include "pwm_motor.h"
 
 /**** Debugging output with semihosting ****/
 
 #include "MotateDebug.h"
 
-/* Note: stepper_debug statements removed 1/16/17 in SHA eb0905ccae03c04f99e6f471cbe029002f0324c6. 
+/* Note: stepper_debug statements removed 1/16/17 in SHA eb0905ccae03c04f99e6f471cbe029002f0324c6.
  * See earlier commits to recover
  */
 
@@ -79,15 +80,15 @@ Motate::SysTickEvent dwell_systick_event {[&] {
 }, nullptr};
 
 /* Note on the above:
-It's a lambda function creating a closure function. 
-The full implementation that uses it is small and may help: 
+It's a lambda function creating a closure function.
+The full implementation that uses it is small and may help:
 https://github.com/synthetos/Motate/blob/41e5b92a98de4b268d1804bf6eadf3333298fc75/MotateProject/motate/Atmel_sam_common/SamTimers.h#L1147-L1218
 It's just like a function, and is used as a function pointer.
 
-But the closure part means that whatever variables that were in scope where the 
-[&](parameters){code} is will be captured by the compiler as references in the generated 
-function and used wherever the function gets called. In this particular use, there isn't 
-anything that wouldn't be available anywhere in that file, but they're not being called 
+But the closure part means that whatever variables that were in scope where the
+[&](parameters){code} is will be captured by the compiler as references in the generated
+function and used wherever the function gets called. In this particular use, there isn't
+anything that wouldn't be available anywhere in that file, but they're not being called
 from that file. They're being called by the systick interrupt which is over in SamTmers.cpp
 So this saves a bunch of work exposing bits that the systick would need to call and encapsulates it.
 And there's almost no runtime overhead. Just a check for a valid function pointer and then a call of it.
@@ -346,6 +347,26 @@ void dda_timer_type::interrupt()
     if (--st_run.dda_ticks_downcount == 0) {
         _load_move();       // load the next move at the current interrupt level
     }
+
+    // // PWM Motors
+    // for (int i = 0; i < PWM_MOTOR_COUNT; i++) {
+    //   pwm_motor* m = &pwm_motors[i]
+    //   if (m->x_counter) {
+    //     m->counter ++;
+    //     if (m->counter >= m->x_counter) {
+    //       // step
+    //       if (m->reg->PIO_ODSR & m->mask) {
+    //         m->reg->PIO_CODR = m->mask;
+    //       }
+    //       else {
+    //         m->reg->PIO_SODR = m->mask;
+    //       }
+    //
+    //       m->counter = 0;
+    //     }
+    //   }
+    // }
+
 } // MOTATE_TIMER_INTERRUPT
 } // namespace Motate
 
@@ -772,7 +793,7 @@ void st_prep_out_of_band_dwell(float microseconds)
         st_prep_dwell(microseconds);
         st_pre.buffer_state = PREP_BUFFER_OWNED_BY_LOADER;    // signal that prep buffer is ready
         st_request_load_move();
-    }    
+    }
 }
 
 /*
@@ -809,7 +830,7 @@ static int8_t _motor(const index_t index)
 static float _set_motor_steps_per_unit(nvObj_t *nv)
 {
     uint8_t m = _motor(nv->index);
-    st_cfg.mot[m].units_per_step = (st_cfg.mot[m].travel_rev * st_cfg.mot[m].step_angle) / 
+    st_cfg.mot[m].units_per_step = (st_cfg.mot[m].travel_rev * st_cfg.mot[m].step_angle) /
                                    (360 * st_cfg.mot[m].microsteps);
 
     st_cfg.mot[m].steps_per_unit = 1/st_cfg.mot[m].units_per_step;
@@ -826,7 +847,7 @@ static float _set_motor_steps_per_unit(nvObj_t *nv)
  * st_set_tr() - set travel per motor revolution
  * st_get_mi() - get motor microsteps
  * st_set_mi() - set motor microsteps
- * 
+ *
  * st_set_pm() - set motor power mode
  * st_get_pm() - get motor power mode
  * st_set_pl() - set motor power level
@@ -841,10 +862,10 @@ static float _set_motor_steps_per_unit(nvObj_t *nv)
  *
  *  This function retrieves an internal axis number and remaps it to an external axis number
  */
-stat_t st_get_ma(nvObj_t *nv) 
+stat_t st_get_ma(nvObj_t *nv)
 {
     uint8_t remap_axis[9] = { 0,1,2,6,7,8,3,4,5 };
-    ritorno(get_integer(nv, st_cfg.mot[_motor(nv->index)].motor_map)); 
+    ritorno(get_integer(nv, st_cfg.mot[_motor(nv->index)].motor_map));
     nv->value_int = remap_axis[nv->value_int];
     return(STAT_OK);
 }
@@ -859,7 +880,7 @@ stat_t st_get_ma(nvObj_t *nv)
  *  This function accepts an external axis number and remaps it to an external axis number,
  *  writes the internal axis number and returns the external number in the JSON response.
  */
-stat_t st_set_ma(nvObj_t *nv) 
+stat_t st_set_ma(nvObj_t *nv)
 {
     if (nv->value_int < 0) {
         nv->valuetype = TYPE_NULL;
@@ -872,7 +893,7 @@ stat_t st_set_ma(nvObj_t *nv)
     uint8_t external_axis = nv->value_int;
     uint8_t remap_axis[9] = { 0,1,2,6,7,8,3,4,5 };
     nv->value_int = remap_axis[nv->value_int];
-    ritorno(set_integer(nv, st_cfg.mot[_motor(nv->index)].motor_map, 0, AXES)); 
+    ritorno(set_integer(nv, st_cfg.mot[_motor(nv->index)].motor_map, 0, AXES));
     nv->value_int = external_axis;
     return(STAT_OK);
 }
@@ -916,9 +937,9 @@ stat_t st_set_mi(nvObj_t *nv)
 }
 
 // motor steps per unit (direct)
-stat_t st_get_su(nvObj_t *nv) 
-{ 
-    return(get_float(nv, st_cfg.mot[_motor(nv->index)].steps_per_unit)); 
+stat_t st_get_su(nvObj_t *nv)
+{
+    return(get_float(nv, st_cfg.mot[_motor(nv->index)].steps_per_unit));
 }
 
 stat_t st_set_su(nvObj_t *nv)
@@ -935,14 +956,14 @@ stat_t st_set_su(nvObj_t *nv)
         if (cm_get_axis_type(nv) == AXIS_TYPE_LINEAR) {
             nv->value_flt *= INCHES_PER_MM;
         }
-    }    
+    }
     uint8_t m = _motor(nv->index);
     st_cfg.mot[m].steps_per_unit = nv->value_flt;
     st_cfg.mot[m].units_per_step = 1.0/st_cfg.mot[m].steps_per_unit;
 
     // Scale TR so all the other values make sense
     // You could scale any one of the other values, but TR makes the most sense
-    st_cfg.mot[m].travel_rev = (360.0 * st_cfg.mot[m].microsteps) / 
+    st_cfg.mot[m].travel_rev = (360.0 * st_cfg.mot[m].microsteps) /
                                (st_cfg.mot[m].steps_per_unit * st_cfg.mot[m].step_angle);
     return(STAT_OK);
 }
@@ -1108,7 +1129,7 @@ stat_t st_set_md(nvObj_t *nv)
     return (STAT_OK);
 }
 
-stat_t st_get_dw(nvObj_t *nv) 
+stat_t st_get_dw(nvObj_t *nv)
 {
     nv->value_int = st_run.dwell_ticks_downcount;
     nv->valuetype = TYPE_INTEGER;
