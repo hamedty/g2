@@ -106,6 +106,7 @@ using Motate::OutputPin;
 #define FREQUENCY_DDA		150000UL		// Hz step frequency. Interrupts actually fire at 2x (300 KHz)
 #define FREQUENCY_DWELL		1000UL
 #define FREQUENCY_SGI		200000UL		// 200,000 Hz means software interrupts will fire 5 uSec after being called
+#define FREQUENCY_PWM_MOTORS		150000UL		// 200,000 Hz means software interrupts will fire 5 uSec after being called
 
 /**** Motate Definitions ****/
 
@@ -114,6 +115,9 @@ typedef TimerChannel<3,0> dda_timer_type;	// stepper pulse generation in stepper
 typedef TimerChannel<4,0> exec_timer_type;	// request exec timer in stepper.cpp
 typedef TimerChannel<5,0> fwd_plan_timer_type;	// request exec timer in stepper.cpp
 
+#if PWM_MOTORS_AVAILABLE
+typedef TimerChannel<6,0> pwm_timer_type;	// stepper pulse generation in pwm motors
+#endif
 // Pin assignments
 
 pin_number indicator_led_pin_num = Motate::kLED_USBRXPinNumber;

@@ -484,7 +484,12 @@ uint16_t json_serialize(nvObj_t *nv, char *out_buf, uint16_t size)
     while (prev_depth-- > initial_depth) {
         *str++ = '}';
     }
+    #if ENC2_AVAILABLE
     str += sprintf((char *)str, ", \"enc1\":%ld, \"enc2\": %ld}\n", (int32_t)REG_TC0_CV0, (int32_t)REG_TC2_CV0);         // using sprintf for this last one ensures a NUL termination
+    #else
+    str += sprintf((char *)str, ", \"enc1\":%ld}\n", (int32_t)REG_TC0_CV0);         // using sprintf for this last one ensures a NUL termination
+    #endif
+
     if (str > out_buf + size) {
         return (-1);
     }

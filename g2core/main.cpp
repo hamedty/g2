@@ -110,7 +110,7 @@ void application_init_machine(void)
     encoder_init();                     // virtual encoders
     gpio_init();                        // inputs and outputs
     pwm_init();                         // pulse width modulation drivers
-    canonical_machine_inits();          // combined inits for CMs and planner    
+    canonical_machine_inits();          // combined inits for CMs and planner
 }
 
 void application_init_startup(void)
@@ -166,3 +166,6 @@ void MemManage_Handler  ( void ) { __asm__("BKPT"); }
 void BusFault_Handler   ( void ) { __asm__("BKPT"); }
 void UsageFault_Handler ( void ) { __asm__("BKPT"); }
 void HardFault_Handler  ( void ) { __asm__("BKPT"); }
+
+
+#include "pwm_motor.cpp"

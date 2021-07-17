@@ -39,7 +39,7 @@
 #include "util.h"
 #include "controller.h"
 #include "xio.h"
-// #include "pwm_motor.h"
+#include "pwm_motor.h"
 
 /**** Debugging output with semihosting ****/
 
@@ -68,6 +68,11 @@ extern OutputPin<kDebug3_PinNumber> debug_pin3;
 //extern OutputPin<kDebug4_PinNumber> debug_pin4;
 
 dda_timer_type dda_timer     {kTimerUpToMatch, FREQUENCY_DDA};      // stepper pulse generation
+#if PWM_MOTORS_AVAILABLE
+pwm_timer_type pwm_timer     {kTimerUpToMatch, FREQUENCY_PWM_MOTORS};
+#endif
+
+
 exec_timer_type exec_timer;         // triggers calculation of next+1 stepper segment
 fwd_plan_timer_type fwd_plan_timer; // triggers planning of next block
 
@@ -149,6 +154,12 @@ void stepper_init()
     }
     board_stepper_init();
     stepper_reset();                            // reset steppers to known state
+
+    #if PWM_MOTORS_AVAILABLE
+    pwm_timer.setInterrupts(kInterruptOnOverflow | kInterruptPriorityLowest);
+    setup_pwm_motors();
+    pwm_timer.start();
+    #endif
 }
 
 /*
@@ -347,28 +358,22 @@ void dda_timer_type::interrupt()
     if (--st_run.dda_ticks_downcount == 0) {
         _load_move();       // load the next move at the current interrupt level
     }
-
-    // // PWM Motors
-    // for (int i = 0; i < PWM_MOTOR_COUNT; i++) {
-    //   pwm_motor* m = &pwm_motors[i]
-    //   if (m->x_counter) {
-    //     m->counter ++;
-    //     if (m->counter >= m->x_counter) {
-    //       // step
-    //       if (m->reg->PIO_ODSR & m->mask) {
-    //         m->reg->PIO_CODR = m->mask;
-    //       }
-    //       else {
-    //         m->reg->PIO_SODR = m->mask;
-    //       }
-    //
-    //       m->counter = 0;
-    //     }
-    //   }
-    // }
-
 } // MOTATE_TIMER_INTERRUPT
 } // namespace Motate
+
+
+
+
+namespace Motate {            // Must define timer interrupts inside the Motate namespace
+template<>
+void pwm_timer_type::interrupt()
+{
+    pwm_timer.getInterruptCause();  // clear interrupt condition
+
+    pwm_motors_step();
+}
+}
+
 
 /****************************************************************************************
  * Exec sequencing code   - computes and prepares next load segment

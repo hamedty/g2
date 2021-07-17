@@ -47,6 +47,7 @@
 #include "util.h"
 #include "help.h"
 #include "xio.h"
+#include "pwm_motor.h"
 
 /*** structures ***/
 
@@ -539,6 +540,20 @@ const cfgItem_t cfgArray[] = {
 #ifdef FEEDER
     { "out","out13", _i0, 2, io_print_out, io_get_output, io_set_output, nullptr, 0 },
     { "out","out14", _i0, 2, io_print_out, io_get_output, io_set_output, nullptr, 0 },
+#endif
+
+#if PWM_MOTORS_AVAILABLE
+  // Digital output state readers (default to non-active)
+  { "m","m1",  _i0, 2, pwm_motor_print_out, pwm_motor_get_value, pwm_motor_set_value, nullptr, 0 },
+  { "m","m2",  _i0, 2, pwm_motor_print_out, pwm_motor_get_value, pwm_motor_set_value, nullptr, 0 },
+  { "m","m3",  _i0, 2, pwm_motor_print_out, pwm_motor_get_value, pwm_motor_set_value, nullptr, 0 },
+  { "m","m4",  _i0, 2, pwm_motor_print_out, pwm_motor_get_value, pwm_motor_set_value, nullptr, 0 },
+  { "m","m5",  _i0, 2, pwm_motor_print_out, pwm_motor_get_value, pwm_motor_set_value, nullptr, 0 },
+  { "m","m6",  _i0, 2, pwm_motor_print_out, pwm_motor_get_value, pwm_motor_set_value, nullptr, 0 },
+  { "m","m7",  _i0, 2, pwm_motor_print_out, pwm_motor_get_value, pwm_motor_set_value, nullptr, 0 },
+  { "m","m8",  _i0, 2, pwm_motor_print_out, pwm_motor_get_value, pwm_motor_set_value, nullptr, 0 },
+  { "m","m9",  _i0, 2, pwm_motor_print_out, pwm_motor_get_value, pwm_motor_set_value, nullptr, 0 },
+  { "m","m10", _i0, 2, pwm_motor_print_out, pwm_motor_get_value, pwm_motor_set_value, nullptr, 0 },
 #endif
 
     // PWM settings
