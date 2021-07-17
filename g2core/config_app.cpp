@@ -553,7 +553,6 @@ const cfgItem_t cfgArray[] = {
   { "m","m7",  _i0, 2, pwm_motor_print_out, pwm_motor_get_value, pwm_motor_set_value, nullptr, 0 },
   { "m","m8",  _i0, 2, pwm_motor_print_out, pwm_motor_get_value, pwm_motor_set_value, nullptr, 0 },
   { "m","m9",  _i0, 2, pwm_motor_print_out, pwm_motor_get_value, pwm_motor_set_value, nullptr, 0 },
-  { "m","m10", _i0, 2, pwm_motor_print_out, pwm_motor_get_value, pwm_motor_set_value, nullptr, 0 },
 #endif
 
     // PWM settings

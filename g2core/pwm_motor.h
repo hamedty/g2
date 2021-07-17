@@ -4,7 +4,7 @@
 
 # include "stepper.h"
 
-# define PWM_MOTOR_COUNT 2
+# define PWM_MOTOR_COUNT 9
 
 typedef struct pwm_motor {
   uint32_t x_counter; // total counter

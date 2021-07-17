@@ -3,8 +3,16 @@
 #include "pwm_motor.h"
 
 pwm_motor_t pwm_motors[PWM_MOTOR_COUNT] = {
-  { 10000, 0, PIOC, 1 << 6  }, // PC6 - step8 - D38
-  { 10000, 0, PIOB, 1 << 27 }, // PB27 - D13
+  { 0, 0, PIOC, 1 << 17 }, // M1 - Step 4 - PC17 - D46
+  { 0, 0, PIOC, 1 << 19 }, // M2 - Step 5 - PC19 - D44
+  { 0, 0, PIOA, 1 << 19 }, // M3 - Step 6 - PA19 - D42
+  { 0, 0, PIOC, 1 << 8  }, // M4 - Step 7 - PC8 - D40
+  { 0, 0, PIOC, 1 << 6  }, // M5 - Step 8 - PC6 - D38
+  { 0, 0, PIOC, 1 << 4  }, // M6 - Step 9 - PC4 - D36
+  { 0, 0, PIOC, 1 << 2  }, // M7 - Step 10 - PC2 - D34
+  { 0, 0, PIOD, 1 << 10 }, // M8 - Step 11 - PD10 - D32
+  { 0, 0, PIOD, 1 << 9  }, // M9 - Step 12 - PD9 - D30
+
 };
 
 void setup_pwm_motors() {
