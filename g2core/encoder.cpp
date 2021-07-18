@@ -51,7 +51,8 @@ void encoder_init() {
     #if ENC1_AVAILABLE
     // pinMode( 2, INPUT_PULLUP); PB25
     // pinMode(13, INPUT_PULLUP); PB27
-    REG_PIOB_ODR = (1 << 25) | (1 << 27);
+    REG_PIOB_ODR = (1 << 25) | (1 << 27); // disable output
+    REG_PIOB_PUER = (1 << 25) | (1 << 27); // enable pull up
 
     REG_PMC_PCER0 = PMC_PCER0_PID27;   // activate clock for TC0
     REG_TC0_CMR0  = TC_CMR_TCCLKS_XC0; // select XC0 as clock source
@@ -62,7 +63,8 @@ void encoder_init() {
     #if ENC2_AVAILABLE
     // pinMode(4, INPUT_PULLUP); PC26
     // pinMode(5, INPUT_PULLUP); PC25
-    REG_PIOC_ODR = (1 << 25) | (1 << 26);
+    REG_PIOC_ODR = (1 << 25) | (1 << 26); // disable output
+    REG_PIOC_PUER = (1 << 25) | (1 << 26); // enable pull up
 
     REG_PMC_PCER1 = PMC_PCER1_PID33;
     REG_TC2_CMR0  = TC_CMR_TCCLKS_XC0;
