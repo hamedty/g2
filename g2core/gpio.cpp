@@ -55,6 +55,7 @@
 #include "xio.h"
 
 #include "MotateTimers.h"
+#include "pwm_motor.h"
 using namespace Motate;
 
 /**** Allocate structures ****/
@@ -110,6 +111,12 @@ struct ioDigitalInputExt {
         if (D_IN_CHANNELS < ext_pin_number) { return; }
 
         d_in_t *in = &d_in[ext_pin_number-1];
+
+
+        if(ext_pin_number == 4) {
+            pwm_motors[4-1].blocked_in = !(bool)input_pin; // Holder Rail 1
+            pwm_motors[7-1].blocked_in = !(bool)input_pin; // Holder Lift 1
+        }
 
         // return if input is disabled (not supposed to happen)
         if (in->mode == IO_MODE_DISABLED) {

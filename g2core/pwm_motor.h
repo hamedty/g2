@@ -11,6 +11,9 @@ typedef struct pwm_motor {
   uint32_t counter;   // current counter
   Pio     *reg;       // PIO;
   uint32_t reg_mask;
+  int32_t blocked_counter;
+  bool blocked_in;
+  bool blocked_out;
 } pwm_motor_t;
 
 extern pwm_motor_t pwm_motors[PWM_MOTOR_COUNT];
