@@ -298,6 +298,11 @@ static stat_t _homing_axis_clear_init(int8_t axis)  // first clear move
         }
         _homing_axis_move(axis, -hm.latch_backoff, hm.search_velocity);  // otherwise back off the switch
     }
+
+    if (gpio_read_input(hm.homing_input) == INPUT_ACTIVE) {  // the switch is closed at startup
+      _homing_error_exit(axis, STAT_HOMING_ERROR_MUST_CLEAR_SWITCHES_BEFORE_HOMING));
+    }
+
     return (_set_homing_func(_homing_axis_search));  // start the search
 }
 
@@ -308,6 +313,9 @@ static stat_t _homing_axis_search(int8_t axis)  // drive to switch
 {
     cm_set_axis_max_jerk(axis, cm->a[axis].jerk_high);  // use the high-speed jerk for search onward
     _homing_axis_move(axis, hm.search_travel, hm.search_velocity);
+    if (!gpio_read_input(hm.homing_input) == INPUT_ACTIVE) {  // the switch is not closed aafter search
+      _homing_error_exit(axis, STAT_HOMING_CYCLE_FAILED));
+    }
     return (_set_homing_func(_homing_axis_clear));
 }
 
@@ -317,6 +325,9 @@ static stat_t _homing_axis_search(int8_t axis)  // drive to switch
 static stat_t _homing_axis_clear(int8_t axis)  // drive away from switch at search speed
 {
     _homing_axis_move(axis, -hm.latch_backoff, hm.search_velocity);
+    if (gpio_read_input(hm.homing_input) == INPUT_ACTIVE) {  // the switch is closed at startup
+      _homing_error_exit(axis, STAT_HOMING_CYCLE_FAILED));
+    }
     return (_set_homing_func(_homing_axis_latch));
 }
 
@@ -326,6 +337,9 @@ static stat_t _homing_axis_clear(int8_t axis)  // drive away from switch at sear
 static stat_t _homing_axis_latch(int8_t axis)  // drive to switch at low speed
 {
     _homing_axis_move(axis, hm.latch_backoff, hm.latch_velocity);
+    if (!gpio_read_input(hm.homing_input) == INPUT_ACTIVE) {  // the switch is not closed aafter search
+      _homing_error_exit(axis, STAT_HOMING_CYCLE_FAILED));
+    }
     return (_set_homing_func(_homing_axis_setpoint_backoff));
 }
 

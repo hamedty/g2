@@ -230,7 +230,7 @@ pin_number kOutput12_PinNumber = 65; // V12
 pin_number kOutput13_PinNumber = 66; // V13
 pin_number kOutput14_PinNumber = 67; // V14
 pin_number kOutput15_PinNumber = 68; // V15
-pin_number kOutput16_PinNumber = 69; // V16
+pin_number kOutput16_PinNumber = -1; // V16
 
 pin_number kADC0_PinNumber  = -1;    // Heated bed thermistor ADC
 pin_number kADC1_PinNumber  = -1;    // Extruder1_ADC

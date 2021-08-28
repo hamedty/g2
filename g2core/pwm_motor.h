@@ -7,7 +7,8 @@
 # define PWM_MOTOR_COUNT 9
 
 typedef struct pwm_motor {
-  uint32_t x_counter; // total counter
+  uint32_t x_counter_on; // total counter on
+  uint32_t x_counter_off; // total counter off
   uint32_t counter;   // current counter
   Pio     *reg;       // PIO;
   uint32_t reg_mask;
