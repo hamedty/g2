@@ -34,6 +34,7 @@
 #define pm_robot_pinout_h
 
 #include <MotatePins.h>
+#define FREQUENCY_DDA		150000UL		// Hz step frequency. Interrupts actually fire at 2x (300 KHz)
 
 // NOTE: This is a terrible example of a *-pinout.h file!
 // This one is assigned backward in order to match the numbering on the Due.

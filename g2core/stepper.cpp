@@ -363,7 +363,7 @@ void dda_timer_type::interrupt()
 
 
 
-
+#if PWM_MOTORS_AVAILABLE
 namespace Motate {            // Must define timer interrupts inside the Motate namespace
 template<>
 void pwm_timer_type::interrupt()
@@ -373,6 +373,7 @@ void pwm_timer_type::interrupt()
     pwm_motors_step();
 }
 }
+#endif
 
 
 /****************************************************************************************

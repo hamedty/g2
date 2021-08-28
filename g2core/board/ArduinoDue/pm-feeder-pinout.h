@@ -34,6 +34,7 @@
 #define pm_feeder_pinout_h
 
 #include <MotatePins.h>
+#define FREQUENCY_DDA		50000UL		// Hz step frequency. Interrupts actually fire at 2x (300 KHz)
 
 // NOTE: This is a terrible example of a *-pinout.h file!
 // This one is assigned backward in order to match the numbering on the Due.
@@ -58,6 +59,8 @@
 #define ENC1_AVAILABLE 1
 #define ENC2_AVAILABLE 0
 #define PWM_MOTORS_AVAILABLE 1
+#define FREQUENCY_PWM_MOTORS		10000UL		// 200,000 Hz means software interrupts will fire 5 uSec after being called
+
 
 #define ADC0_AVAILABLE 0
 #define ADC1_AVAILABLE 0
