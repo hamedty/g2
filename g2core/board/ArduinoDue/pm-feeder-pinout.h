@@ -59,7 +59,7 @@
 #define ENC1_AVAILABLE 1
 #define ENC2_AVAILABLE 0
 #define PWM_MOTORS_AVAILABLE 1
-#define FREQUENCY_PWM_MOTORS		10000UL		// 200,000 Hz means software interrupts will fire 5 uSec after being called
+#define FREQUENCY_PWM_MOTORS		30000UL		// 200,000 Hz means software interrupts will fire 5 uSec after being called
 
 
 #define ADC0_AVAILABLE 0

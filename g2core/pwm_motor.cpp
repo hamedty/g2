@@ -2,12 +2,12 @@
 
 #include "pwm_motor.h"
 #include "gpio.h"
-#define BLOCKED_COUNTER_SMALL 40000
-#define BLOCKED_COUNTER_BIG   200000
+#define BLOCKED_COUNTER_SMALL 30000
+#define BLOCKED_COUNTER_BIG   50000
 
 pwm_motor_t pwm_motors[PWM_MOTOR_COUNT] = {
   // { 0, 0, 0, PIOC, 1 << 17, 0, 0, 0 }, // M1 - Step 4 - PC17 - D46
-  { 0, 1000, 0, PIOA, 1 << 0, 1, 0, 0 }, // M1 - V16 - PA0 - D69
+  { 0, 200, 0, PIOA, 1 << 0, 1, 0, 0 }, // M1 - V16 - PA0 - D69
   { 0, 0, 0, PIOC, 1 << 19, 0, 0, 0 }, // M2 - Step 5 - PC19 - D44
   { 0, 0, 0, PIOA, 1 << 19, 0, 0, 0 }, // M3 - Step 6 - PA19 - D42
   { 0, 0, 0, PIOC, 1 << 8, 1, 0, 0  }, // M4 - Step 7 - PC8 - D40
