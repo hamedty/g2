@@ -15,7 +15,8 @@ pwm_motor_t pwm_motors[PWM_MOTOR_COUNT] = {
   { 0, 0, 0, PIOC, 1 << 4, 0, 0, 0  }, // M6 - Step 9 - PC4 - D36
   // { 0, 0, 0, PIOC, 1 << 2, 1, 0, 0  }, // M7 - Step 10 - PC2 - D34
   { 0, 0, 0, PIOC, 1 << 2, 0, 0, 0  }, // M7 - Step 10 - PC2 - D34
-  { 0, 0, 0, PIOD, 1 << 10, 0, 0, 0 }, // M8 - Step 11 - PD10 - D32
+  // { 0, 0, 0, PIOD, 1 << 10, 0, 0, 0 }, // M8 - Step 11 - PD10 - D32
+  { 0, 0, 0, PIOA, 1 << 1, 0, 0, 0 }, // M8 - V15 - PA1 - D68
   { 0, 0, 0, PIOD, 1 << 9, 0, 0, 0  }, // M9 - Step 12 - PD9 - D30
 
 };
