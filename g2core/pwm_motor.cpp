@@ -3,7 +3,7 @@
 #include "pwm_motor.h"
 #include "gpio.h"
 #define BLOCKED_COUNTER_SMALL 30000
-#define BLOCKED_COUNTER_BIG   50000
+#define BLOCKED_COUNTER_BIG   100000
 
 pwm_motor_t pwm_motors[PWM_MOTOR_COUNT] = {
   // { 0, 0, 0, PIOC, 1 << 17, 0, 0, 0 }, // M1 - Step 4 - PC17 - D46
