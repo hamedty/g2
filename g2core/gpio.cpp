@@ -598,7 +598,20 @@ stat_t io_set_fn(nvObj_t *nv)
  */
 stat_t io_get_input(nvObj_t *nv)
 {
-    nv->value_int = d_in[_io(nv->index)].state;
+    //
+    uint8_t index = _io(nv->index);
+    nv->value_int = d_in[index].state;
+    #ifdef READ_IN5_DIRECTLY
+    if (index == 4) {
+      // in5 - 24 - A15
+      nv->value_int = (REG_PIOA_PDSR & (1 << 15)) == 0;
+    }
+
+    if (index == 5) {
+      // in6 - 25 - PD0
+      nv->value_int = (REG_PIOD_PDSR & (1 << 0)) == 0;
+    }
+    #endif
     nv->valuetype = TYPE_INTEGER;
     return (STAT_OK);
 }
