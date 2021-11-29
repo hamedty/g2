@@ -7,16 +7,14 @@
 
 pwm_motor_t pwm_motors[PWM_MOTOR_COUNT] = {
   // { 0, 0, 0, PIOC, 1 << 17, 0, 0, 0 }, // M1 - Step 4 - PC17 - D46
-  { 0, 200, 0, PIOA, 1 << 0, 1, 0, 0 }, // M1 - V16 - PA0 - D69
+  { 0, 10000, 0, PIOA, 1 << 22, 1, 0, 0 }, // V3 - PA23 - D57 - Holder Jack
   { 0, 0, 0, PIOC, 1 << 19, 0, 0, 0 }, // M2 - Step 5 - PC19 - D44
   { 0, 0, 0, PIOA, 1 << 19, 0, 0, 0 }, // M3 - Step 6 - PA19 - D42
   { 0, 0, 0, PIOC, 1 << 8, 1, 0, 0  }, // M4 - Step 7 - PC8 - D40
   { 0, 0, 0, PIOC, 1 << 6, 0, 0, 0  }, // M5 - Step 8 - PC6 - D38
   { 0, 0, 0, PIOC, 1 << 4, 0, 0, 0  }, // M6 - Step 9 - PC4 - D36
-  // { 0, 0, 0, PIOC, 1 << 2, 1, 0, 0  }, // M7 - Step 10 - PC2 - D34
   { 0, 0, 0, PIOC, 1 << 2, 0, 0, 0  }, // M7 - Step 10 - PC2 - D34
-  // { 0, 0, 0, PIOD, 1 << 10, 0, 0, 0 }, // M8 - Step 11 - PD10 - D32
-  { 0, 0, 0, PIOA, 1 << 1, 0, 0, 0 }, // M8 - V15 - PA1 - D68
+  { 0, 0, 0, PIOD, 1 << 10, 0, 0, 0 }, // M8 - Step 11 - PD10 - D32
   { 0, 0, 0, PIOD, 1 << 9, 0, 0, 0  }, // M9 - Step 12 - PD9 - D30
 
 };
@@ -106,14 +104,24 @@ stat_t pwm_motor_get_value(nvObj_t *nv)
 stat_t pwm_motor_set_value(nvObj_t *nv)
 {
   uint8_t motor_index = nv_index_2_motor_index(nv->index);
+  bool m10 = false;
 
-  if (motor_index >= PWM_MOTOR_COUNT) return STAT_OK;
+  if (motor_index > PWM_MOTOR_COUNT) return STAT_OK; // reserve == for M10
+  if (motor_index == 9) {motor_index = 0; m10 = true;} // translate M10 to M1
 
   pwm_motor *m = &pwm_motors[motor_index];
-  m->x_counter_on = (uint32_t)nv->value_flt;
-  if(motor_index != 0) { // everything other than 1st motor
-    m->x_counter_off = m->x_counter_on;
+
+  if(motor_index == 0) { //  1st motor
+    if (m10)
+      m->x_counter_off = (uint32_t)nv->value_flt;
+    else
+      m->x_counter_on = (uint32_t)nv->value_flt;
+
+  } else {
+    m->x_counter_on = (uint32_t)nv->value_flt;
+    m->x_counter_off = (uint32_t)nv->value_flt;
   }
+
   if (m->x_counter_on == 0) {
     m->reg->PIO_CODR = m->reg_mask;
   }

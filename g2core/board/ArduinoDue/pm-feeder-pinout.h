@@ -221,7 +221,7 @@ pin_number kLED_USBTXPinNumber = 73;
 
 pin_number kOutput1_PinNumber  = 59; // V01
 pin_number kOutput2_PinNumber  = 58; // V02
-pin_number kOutput3_PinNumber  = 57; // V03
+pin_number kOutput3_PinNumber  = -1; // 57; // V03 - Holder sequencer
 pin_number kOutput4_PinNumber  = 56; // V04
 pin_number kOutput5_PinNumber  = 55; // V05
 pin_number kOutput6_PinNumber  = 54; // V06
