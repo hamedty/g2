@@ -112,13 +112,6 @@ struct ioDigitalInputExt {
 
         d_in_t *in = &d_in[ext_pin_number-1];
 
-#if PWM_MOTORS_AVAILABLE
-        if(ext_pin_number == 4) {
-            pwm_motors[4-1].blocked_in = !(bool)input_pin; // Holder Rail 1
-            // pwm_motors[7-1].blocked_in = !(bool)input_pin; // Holder Lift 1
-            pwm_motors[1-1].blocked_in = !(bool)input_pin; // spacer
-        }
-#endif
         // return if input is disabled (not supposed to happen)
         if (in->mode == IO_MODE_DISABLED) {
             in->state = INPUT_DISABLED;

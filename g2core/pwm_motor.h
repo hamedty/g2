@@ -12,12 +12,17 @@ typedef struct pwm_motor {
   uint32_t counter;   // current counter
   Pio     *reg;       // PIO;
   uint32_t reg_mask;
-  int32_t blocked_counter;
-  bool blocked_in;
-  bool blocked_out;
+  bool blockable;
 } pwm_motor_t;
 
+
+typedef struct sensor_blocking_data {
+  int32_t blocked_counter;
+  bool blocked_out;
+} sensor_blocking_data_t;
+
 extern pwm_motor_t pwm_motors[PWM_MOTOR_COUNT];
+extern sensor_blocking_data_t sensor_blocking_data;
 
 void    setup_pwm_motors();
 void    pwm_motors_step();
