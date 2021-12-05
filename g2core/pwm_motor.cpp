@@ -3,14 +3,14 @@
 #include "pwm_motor.h"
 #include "gpio.h"
 #define BLOCKED_COUNTER_SMALL 30000
-#define BLOCKED_COUNTER_BIG   70000
+#define BLOCKED_COUNTER_BIG   30000
 
 pwm_motor_t pwm_motors[PWM_MOTOR_COUNT] = {
   // { 0, 0, 0, PIOC, 1 << 17, false}, // M1 - Step 4 - PC17 - D46
   { 0, 10000, 0, PIOA, 1 << 22, true}, // V3 - PA23 - D57 - Holder Jack
   { 0, 0, 0, PIOC, 1 << 19, false}, // M2 - Step 5 - PC19 - D44
   { 0, 0, 0, PIOA, 1 << 19, false}, // M3 - Step 6 - PA19 - D42
-  { 0, 0, 0, PIOC, 1 << 8, true}, // M4 - Step 7 - PC8 - D40
+  { 0, 0, 0, PIOC, 1 << 8, false}, // M4 - Step 7 - PC8 - D40
   { 0, 0, 0, PIOC, 1 << 6, false}, // M5 - Step 8 - PC6 - D38
   { 0, 0, 0, PIOC, 1 << 4, false}, // M6 - Step 9 - PC4 - D36
   { 0, 0, 0, PIOC, 1 << 2, false}, // M7 - Step 10 - PC2 - D34
@@ -110,9 +110,7 @@ stat_t pwm_motor_get_value(nvObj_t *nv)
   return STAT_OK;
 }
 
-stat_t pwm_motor_set_value(nvObj_t *nv)
-{
-  uint8_t motor_index = nv_index_2_motor_index(nv->index);
+stat_t pwm_motor_set_value_simple(uint8_t motor_index, uint32_t value) {
   bool m10 = false;
 
   if (motor_index > PWM_MOTOR_COUNT) return STAT_OK; // reserve == for M10
@@ -122,13 +120,13 @@ stat_t pwm_motor_set_value(nvObj_t *nv)
 
   if(motor_index == 0) { //  1st motor
     if (m10)
-      m->x_counter_off = (uint32_t)nv->value_flt;
+      m->x_counter_off = value;
     else
-      m->x_counter_on = (uint32_t)nv->value_flt;
+      m->x_counter_on = value;
 
   } else {
-    m->x_counter_on = (uint32_t)nv->value_flt;
-    m->x_counter_off = (uint32_t)nv->value_flt;
+    m->x_counter_on = value;
+    m->x_counter_off = value;
   }
 
   if (m->x_counter_on == 0) {
@@ -137,5 +135,12 @@ stat_t pwm_motor_set_value(nvObj_t *nv)
 
   return STAT_OK;
 }
+
+
+stat_t pwm_motor_set_value(nvObj_t *nv) {
+  uint8_t motor_index = nv_index_2_motor_index(nv->index);
+  return pwm_motor_set_value_simple(motor_index, (uint32_t)nv->value_flt);
+}
+
 
 #endif // PWM_MOTORS_AVAILABLE

@@ -508,6 +508,8 @@ stat_t cm_homing_cycle_start_no_set(const float axes[], const bool flags[]); // 
 stat_t cm_homing_cycle_callback(void);                          // G28.2/.4 main loop callback
 stat_t cm_reset_encoders();        // G28.5
 
+stat_t cm_special_function();        // by hamed
+
 // Probe cycles
 stat_t cm_straight_probe(float target[], bool flags[],          // G38.x
                          bool trip_sense, bool alarm_flag);

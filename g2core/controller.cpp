@@ -170,6 +170,11 @@ static void _controller_HSM()
     DISPATCH(cm_operation_runner_callback());   // operation action runner
     DISPATCH(cm_arc_callback(cm));              // arc generation runs as a cycle above lines
 
+#if SPECIAL_FUNCTIONS
+    // SPECIAL FUNCTIONS by Hamed
+    DISPATCH(cm_special_function());            // SPECIAL FUNCTIONS by Hamed
+#endif
+
     DISPATCH(cm_homing_cycle_callback());       // homing cycle operation (G28.2)
     DISPATCH(cm_probing_cycle_callback());      // probing cycle operation (G38.2)
     DISPATCH(cm_jogging_cycle_callback());      // jog cycle operation
@@ -302,7 +307,7 @@ static void _dispatch_kernel(const devflags_t flags)
         nv_copy_string(nv, cs.bufp);                        // copy the Gcode line
         nv->valuetype = TYPE_STRING;
         status = gcode_parser(cs.bufp);
-        
+
 #if MARLIN_COMPAT_ENABLED == true
         if (js.json_mode == MARLIN_COMM_MODE) {             // in case a marlin-specific M-code was found
             cs.comm_request_mode = MARLIN_COMM_MODE;        // mode of this command
@@ -341,7 +346,7 @@ static stat_t _controller_state()
 {
     if (cs.controller_state == CONTROLLER_CONNECTED) {        // first time through after reset
         cs.controller_state = CONTROLLER_STARTUP;
-        
+
         // This is here just to put a small delay in before the startup message.
 #if MARLIN_COMPAT_ENABLED == true
         // For Marlin compatibility, we need this to be long enough for the UI to say something and reveal
@@ -488,8 +493,8 @@ static stat_t _shutdown_handler(void)
 static stat_t _limit_switch_handler(void)
 {
     auto machine_state = cm_get_machine_state();
-    if ((machine_state != MACHINE_ALARM) && 
-        (machine_state != MACHINE_PANIC) && 
+    if ((machine_state != MACHINE_ALARM) &&
+        (machine_state != MACHINE_PANIC) &&
         (machine_state != MACHINE_SHUTDOWN)) {
         safe_pin.toggle();
     }
@@ -560,5 +565,3 @@ stat_t _test_system_assertions()
     xio_test_assertions();
     return (STAT_OK);
 }
-
-    

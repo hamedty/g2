@@ -31,6 +31,7 @@ uint8_t nv_index_2_motor_index(const index_t index);
 void    pwm_motor_print_out(nvObj_t *nv);
 stat_t  pwm_motor_get_value(nvObj_t *nv);
 stat_t  pwm_motor_set_value(nvObj_t *nv);
+stat_t pwm_motor_set_value_simple(uint8_t, uint32_t);
 
 #endif // PWM_MOTORS_AVAILABLE
 #endif // PWM_MOTOR_H_ONCE
