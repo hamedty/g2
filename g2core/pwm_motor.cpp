@@ -1,10 +1,13 @@
+#ifdef PWM_MOTORS_AVAILABLE
 #if PWM_MOTORS_AVAILABLE
 
 #include "pwm_motor.h"
 #include "gpio.h"
-#define BLOCKED_COUNTER_SMALL 30000
-#define BLOCKED_COUNTER_BIG   30000
+#define BLOCKED_COUNTER_SMALL 20000
+#define BLOCKED_COUNTER_BIG   20000
 
+// Feeder
+#if PWM_MOTORS_ARRANGEMENT == 1
 pwm_motor_t pwm_motors[PWM_MOTOR_COUNT] = {
   // { 0, 0, 0, PIOC, 1 << 17, false}, // M1 - Step 4 - PC17 - D46
   { 0, 10000, 0, PIOA, 1 << 22, true}, // V3 - PA23 - D57 - Holder Jack
@@ -17,7 +20,12 @@ pwm_motor_t pwm_motors[PWM_MOTOR_COUNT] = {
   { 0, 0, 0, PIOD, 1 << 10, false}, // M8 - Step 11 - PD10 - D32
   { 0, 0, 0, PIOD, 1 << 9, false}, // M9 - Step 12 - PD9 - D30
 };
-
+#else
+// Dosing Feeder
+pwm_motor_t pwm_motors[PWM_MOTOR_COUNT] = {
+  { 0, 0, 0, PIOB, 1 << 25, false} // Conveyor motor - D2 - B25
+};
+#endif
 sensor_blocking_data_t sensor_blocking_data = {0, false};
 
 void setup_pwm_motors() {
@@ -32,6 +40,7 @@ void setup_pwm_motors() {
 
 void pwm_motors_step() {
 
+#if PWM_MOTORS_ARRANGEMENT == 1
   bool motors_blocked_by_sensor = sensor_blocking_data.blocked_out;
   // Sensor = in4 - D27 - PD2 - active low
   bool sensor_blocked = (REG_PIOD_PDSR & (1 << 2)) == 0;
@@ -63,7 +72,9 @@ void pwm_motors_step() {
     }
   }
   sensor_blocking_data.blocked_out = motors_blocked_by_sensor;
-
+#else
+  bool motors_blocked_by_sensor = false;
+#endif
 
   // 2- Motors step
   for (int i = 0; i < PWM_MOTOR_COUNT; i++) {
@@ -118,6 +129,7 @@ stat_t pwm_motor_set_value_simple(uint8_t motor_index, uint32_t value) {
 
   pwm_motor *m = &pwm_motors[motor_index];
 
+#if PWM_MOTORS_ARRANGEMENT == 1
   if(motor_index == 0) { //  1st motor
     if (m10)
       m->x_counter_off = value;
@@ -128,6 +140,11 @@ stat_t pwm_motor_set_value_simple(uint8_t motor_index, uint32_t value) {
     m->x_counter_on = value;
     m->x_counter_off = value;
   }
+#else
+  m->x_counter_on = value;
+  m->x_counter_off = value;
+#endif
+
 
   if (m->x_counter_on == 0) {
     m->reg->PIO_CODR = m->reg_mask;  // clear
@@ -143,4 +160,5 @@ stat_t pwm_motor_set_value(nvObj_t *nv) {
 }
 
 
+#endif // PWM_MOTORS_AVAILABLE
 #endif // PWM_MOTORS_AVAILABLE

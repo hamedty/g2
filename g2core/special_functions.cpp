@@ -1,4 +1,7 @@
+// #include "g2core.h"
 #include "config.h"
+#include "encoder.h"
+#include "canonical_machine.h"  // needed for cm_panic() in assertions
 #include "pwm_motor.h"
 
 // gate: out7 -> 60 = PA3
@@ -6,6 +9,8 @@
 // holder microswitch lock: out1 -> 59 = PA4
 // motors: m2, m3
 
+#ifdef SPECIAL_FUNCTIONS
+#if SPECIAL_FUNCTIONS
 stat_t cm_special_function(void) {
     // if gate not open return (PA3)
     if ((REG_PIOA_PDSR & (1 << 3)) == 0) return STAT_OK;
@@ -24,3 +29,5 @@ stat_t cm_special_function(void) {
 
     return STAT_OK;
 }
+#endif
+#endif

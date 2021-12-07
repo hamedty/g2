@@ -1,10 +1,19 @@
 #ifndef PWM_MOTOR_H_ONCE
 #define PWM_MOTOR_H_ONCE
-#if PWM_MOTORS_AVAILABLE
 
+#include "g2core.h"
+#include "config.h"
+#include "encoder.h"
+#include "canonical_machine.h"  // needed for cm_panic() in assertions
 # include "stepper.h"
 
+#if PWM_MOTORS_AVAILABLE
+
+#if PWM_MOTORS_ARRANGEMENT == 1
 # define PWM_MOTOR_COUNT 9
+#else
+# define PWM_MOTOR_COUNT 1
+#endif
 
 typedef struct pwm_motor {
   uint32_t x_counter_on; // total counter on

@@ -59,7 +59,9 @@
 
 #define ENC1_AVAILABLE 0
 #define ENC2_AVAILABLE 0
-#define PWM_MOTORS_AVAILABLE 0
+#define PWM_MOTORS_AVAILABLE 1
+#define PWM_MOTORS_ARRANGEMENT 2
+#define FREQUENCY_PWM_MOTORS		30000UL		// 200,000 Hz means software interrupts will fire 5 uSec after being called
 
 #define ADC0_AVAILABLE 0
 #define ADC1_AVAILABLE 0
@@ -234,7 +236,7 @@ pin_number kOutput3_PinNumber  = 45; // Orientor 2
 pin_number kOutput4_PinNumber  = 42; // Reserve
 pin_number kOutput5_PinNumber  = 43; // Reserve
 pin_number kOutput6_PinNumber  = 40; // Reserve
-pin_number kOutput7_PinNumber  = -1; // MS0_M1
+pin_number kOutput7_PinNumber  = 3; // small conveoyr motor direction
 pin_number kOutput8_PinNumber  = -1; // MS1_M1
 pin_number kOutput9_PinNumber  = -1; // MS2_M1
 pin_number kOutput10_PinNumber = -1; // MS0_M3

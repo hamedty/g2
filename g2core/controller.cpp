@@ -169,10 +169,11 @@ static void _controller_HSM()
     DISPATCH(mp_planner_callback());            // motion planner
     DISPATCH(cm_operation_runner_callback());   // operation action runner
     DISPATCH(cm_arc_callback(cm));              // arc generation runs as a cycle above lines
-
+#ifdef SPECIAL_FUNCTIONS
 #if SPECIAL_FUNCTIONS
     // SPECIAL FUNCTIONS by Hamed
     DISPATCH(cm_special_function());            // SPECIAL FUNCTIONS by Hamed
+#endif
 #endif
 
     DISPATCH(cm_homing_cycle_callback());       // homing cycle operation (G28.2)
