@@ -221,6 +221,43 @@ encoder_check_config_t encoder_check_configs[ENCODER_COUNT] = {
 };
 #endif
 
+#ifdef CHECK_ENCODER_CONFIG_RAIL
+/* rail:
+'tr': 25,  # travel per rev = 5mm
+'mi': 2,  # microstep = 2
+'posz': ['enc1', 64.0, 1.0, 5.0],
+
+ 1 rev = 400 step = 25 mm
+ 1 mm = 64 enc
+ ----------------
+ 400 step = 1600 enc
+ 1 step = 4 enc
+*/
+#define ENCODER_COUNT 1
+encoder_check_config_t encoder_check_configs[ENCODER_COUNT] = {
+  // motor_index / factor; encoder_index / factor; threshold;
+  { 0, 4, 0, 1, 0},
+};
+#endif
+
+#ifdef CHECK_ENCODER_CONFIG_FEEDER
+/* feeder:
+'tr': 20,  # travel per rev = 20mm
+'mi': 2,  # microstep = 2
+'posz': ['enc1', 120.0, 1.0, 1000.0],
+
+ 1 rev = 400 step = 20 mm
+ 1 mm = 120 enc
+ ----------------
+ 400 step = 2400 enc
+ 1 step = 6 enc
+*/
+#define ENCODER_COUNT 1
+encoder_check_config_t encoder_check_configs[ENCODER_COUNT] = {
+  // motor_index / factor; encoder_index / factor; threshold;
+  { 2, 6, 0, 1, 0},
+};
+#endif
 
 stat_t cm_check_encoder(void) {
   for (uint8_t i = 0; i < ENCODER_COUNT; i++) {
