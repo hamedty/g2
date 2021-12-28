@@ -89,7 +89,7 @@ static void _audit_buffers();
  * JSON planner objects
  */
 
-#define JSON_COMMAND_BUFFER_SIZE 3
+#define JSON_COMMAND_BUFFER_SIZE 5
 
 struct json_command_buffer_t {
     char buf[RX_BUFFER_SIZE];
@@ -165,7 +165,7 @@ void _init_planner_queue(mpPlanner_t *_mp, mpBuf_t *queue, uint8_t size)
     q->r = queue;
     q->queue_size = size;
     q->buffers_available = size;
-    
+
     pv = &q->bf[size-1];
     for (i=0; i < size; i++) {
         q->bf[i].buffer_number = i;         // number is for diagnostics only (otherwise not used)
@@ -181,21 +181,21 @@ void _init_planner_queue(mpPlanner_t *_mp, mpBuf_t *queue, uint8_t size)
 void planner_init(mpPlanner_t *_mp, mpPlannerRuntime_t *_mr, mpBuf_t *queue, uint8_t queue_size)
 {
     // init planner master structure
-    memset(_mp, 0, sizeof(mpPlanner_t));    // clear all values, pointers and status    
+    memset(_mp, 0, sizeof(mpPlanner_t));    // clear all values, pointers and status
     _mp->magic_start = MAGICNUM;            // set boundary condition assertions
     _mp->magic_end = MAGICNUM;
     _mp->mfo_factor = 1.00;
-   
+
     // init planner queues
     _mp->q.bf = queue;                      // assign puffer pool to queue manager structure
     _init_planner_queue(_mp, queue, queue_size);
- 
+
     // init runtime structs
     _mp->mr = _mr;
     memset(_mr, 0, sizeof(mpPlannerRuntime_t)); // clear all values, pointers and status
-    _mr->magic_start = MAGICNUM;            // mr assertions 
+    _mr->magic_start = MAGICNUM;            // mr assertions
     _mr->magic_end = MAGICNUM;
- 
+
     _mr->block[0].nx = &_mr->block[1];      // Handle the two "stub blocks" in the runtime structure
     _mr->block[1].nx = &_mr->block[0];
     _mr->r = &_mr->block[0];
@@ -207,7 +207,7 @@ void planner_reset(mpPlanner_t *_mp)        // reset planner queue, cease MR act
     // selectively reset mpPlanner and mpPlannerRuntime w/o actually wiping them
     _mp->reset();
     _mp->mr->reset();
-    jc.reset();
+    // jc.reset();
     _init_planner_queue(_mp, _mp->q.bf, _mp->q.queue_size); // reset planner buffers
 }
 
@@ -240,11 +240,11 @@ void mp_halt_runtime()
  * mp_set_steps_to_runtime_position() - set encoder counts to the runtime position
  *
  *  Since steps are in motor space you have to run the position vector through inverse
- *  kinematics to get the right numbers. This means that in a non-Cartesian robot 
- *  changing any position can result in changes to multiple step values. So this operation 
+ *  kinematics to get the right numbers. This means that in a non-Cartesian robot
+ *  changing any position can result in changes to multiple step values. So this operation
  *  is provided as a single function and always uses the new position vector as an input.
  *
- *  Keeping track of position is complicated by the fact that moves exist in several 
+ *  Keeping track of position is complicated by the fact that moves exist in several
  *  reference frames. The scheme to keep this straight is:
  *
  *     - mp->position - start and end position for planning
@@ -254,8 +254,8 @@ void mp_halt_runtime()
  *  The runtime keeps a lot more data, such as waypoints, step vectors, etc.
  *  See struct mpMoveRuntimeSingleton for details.
  *
- *  Note that position is set immediately when called and may not be not an accurate 
- *  representation of the tool position. The motors are still processing the action 
+ *  Note that position is set immediately when called and may not be not an accurate
+ *  representation of the tool position. The motors are still processing the action
  *  and the real tool position is still close to the starting point.
  */
 
@@ -450,11 +450,11 @@ static stat_t _exec_dwell(mpBuf_t *bf)
 /****************************************************************************************
  * mp_request_out_of_band_dwell() - request a dwell outside of the planner queue
  *
- *  This command is used to request that a dwell be run outside of the planner. 
+ *  This command is used to request that a dwell be run outside of the planner.
  *  The dwell will only be queued if the time is non-zero, and will only be executed
- *  if the runtime has been stopped. This function is typically called from an exec 
- *  such as _exec_spindle_control(). The dwell move is executed from mp_exec_move(). 
- *  This is useful for queuing a dwell after a spindle change. 
+ *  if the runtime has been stopped. This function is typically called from an exec
+ *  such as _exec_spindle_control(). The dwell move is executed from mp_exec_move().
+ *  This is useful for queuing a dwell after a spindle change.
  */
 
 void mp_request_out_of_band_dwell(float seconds)
@@ -516,7 +516,7 @@ bool mp_is_phat_city_time()
  *
  *  - _plan_block() is the backward planning function for a single buffer.
  *
- *  - Just-in-time forward planning is performed by mp_plan_move() in the 
+ *  - Just-in-time forward planning is performed by mp_plan_move() in the
  *    plan_exec.cpp runtime executive
  *
  *  Some Items to note:
@@ -579,7 +579,7 @@ void mp_replan_queue(mpBuf_t *bf)
         if (bf->buffer_state >= MP_BUFFER_FULLY_PLANNED) {  // revert from FULLY PLANNED state
             bf->buffer_state = MP_BUFFER_BACK_PLANNED;
         } else {                                            // If it's not "planned" then it's either backplanned or earlier.
-            break;                                          // We don't need to adjust it.           
+            break;                                          // We don't need to adjust it.
         }
     } while ((bf = mp_get_next_buffer(bf)) != mp_get_r());
 
@@ -759,7 +759,7 @@ mpBuf_t * mp_get_write_buffer()     // get & clear a buffer
 {
 
     mpPlannerQueue_t *q = &(mp->q);
-       
+
     if (q->w->buffer_state == MP_BUFFER_EMPTY) {
         _clear_buffer(q->w);        // NB: this is redundant if the buffer was cleared mp_free_run_buffer()
         q->w->buffer_state = MP_BUFFER_INITIALIZING;
@@ -826,7 +826,7 @@ mpBuf_t * mp_get_run_buffer()
 // Clearing and advancing must be done atomically as other interrupts may be using the run buffer
 bool mp_free_run_buffer()           // EMPTY current run buffer & advance to the next
 {
-    mpPlannerQueue_t *q = &(mp->q);    
+    mpPlannerQueue_t *q = &(mp->q);
     mpBuf_t *r_now = q->r;          // save this pointer is to avoid a race condition when clearing the buffer
 
     _audit_buffers();               // DIAGNOSTIC audit for buffer chain integrity (only runs in DEBUG mode)
@@ -909,7 +909,7 @@ static void _audit_buffers()
 {
     // empty stub
 }
-#else 
+#else
 
 static void _planner_report(const char *msg)
 {

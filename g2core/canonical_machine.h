@@ -509,6 +509,7 @@ stat_t cm_homing_cycle_callback(void);                          // G28.2/.4 main
 stat_t cm_reset_encoders();        // G28.5
 
 stat_t cm_special_function();        // by hamed
+stat_t cm_check_encoder();        // by hamed
 
 // Probe cycles
 stat_t cm_straight_probe(float target[], bool flags[],          // G38.x

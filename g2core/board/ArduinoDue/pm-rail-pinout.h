@@ -30,12 +30,11 @@
  *
  */
 
-#ifndef pm_station_pinout_h
-#define pm_station_pinout_h
+#ifndef pm_robot_pinout_h
+#define pm_robot_pinout_h
 
 #include <MotatePins.h>
 #define FREQUENCY_DDA		150000UL		// Hz step frequency. Interrupts actually fire at 2x (300 KHz)
-
 
 // NOTE: This is a terrible example of a *-pinout.h file!
 // This one is assigned backward in order to match the numbering on the Due.
@@ -58,9 +57,9 @@
 #define INPUT13_AVAILABLE 0
 
 #define ENC1_AVAILABLE 1
-#define ENC2_AVAILABLE 0
-#define CHECK_ENCODERS
-#define CHECK_ENCODER_CONFIG_STATION
+#define ENC2_AVAILABLE 1
+// #define CHECK_ENCODERS
+// #define CHECK_ENCODER_CONFIG_ROBOT
 #define PWM_MOTORS_AVAILABLE 0
 
 #define ADC0_AVAILABLE 0
@@ -143,8 +142,8 @@ pin_number kKinen_SyncPinNumber = -1;
 
 pin_number kSocket1_SPISlaveSelectPinNumber = -1; // 10;
 pin_number kSocket1_InterruptPinNumber      = -1;
-pin_number kSocket1_StepPinNumber           = 43;
-pin_number kSocket1_DirPinNumber            = 42;
+pin_number kSocket1_StepPinNumber           = 17;
+pin_number kSocket1_DirPinNumber            = 16;
 pin_number kSocket1_EnablePinNumber         = -1;
 pin_number kSocket1_Microstep_0PinNumber    = -1;
 pin_number kSocket1_Microstep_1PinNumber    = -1;
@@ -153,8 +152,8 @@ pin_number kSocket1_VrefPinNumber           = -1; // 34; //PWMTimer<0>
 
 pin_number kSocket2_SPISlaveSelectPinNumber = -1;
 pin_number kSocket2_InterruptPinNumber      = -1;
-pin_number kSocket2_StepPinNumber           = 48;
-pin_number kSocket2_DirPinNumber            = 47;
+pin_number kSocket2_StepPinNumber           = 15;
+pin_number kSocket2_DirPinNumber            = 14;
 pin_number kSocket2_EnablePinNumber         = -1;
 pin_number kSocket2_Microstep_0PinNumber    = -1;
 pin_number kSocket2_Microstep_1PinNumber    = -1;
@@ -163,8 +162,8 @@ pin_number kSocket2_VrefPinNumber           = -1; // 62; //PWMTimer<1>
 
 pin_number kSocket3_SPISlaveSelectPinNumber = -1;
 pin_number kSocket3_InterruptPinNumber      = -1;
-pin_number kSocket3_StepPinNumber           = 35;
-pin_number kSocket3_DirPinNumber            = 33;
+pin_number kSocket3_StepPinNumber           = -1;
+pin_number kSocket3_DirPinNumber            = -1;
 pin_number kSocket3_EnablePinNumber         = -1;
 pin_number kSocket3_Microstep_0PinNumber    = -1;
 pin_number kSocket3_Microstep_1PinNumber    = -1;
@@ -202,10 +201,10 @@ pin_number kSocket6_Microstep_2PinNumber    = -1;
 pin_number kSocket6_VrefPinNumber           = -1; // 67; //PWMTimer<0>
 
 
-pin_number kInput1_PinNumber = 28; // Home Z
-pin_number kInput2_PinNumber = 26; // Some Gate Verification
-pin_number kInput3_PinNumber = 24; // Gate Verification
-pin_number kInput4_PinNumber = 22; // Not Used
+pin_number kInput1_PinNumber = 49;
+pin_number kInput2_PinNumber = 48;
+pin_number kInput3_PinNumber = 50;
+pin_number kInput4_PinNumber = 51;
 pin_number kInput5_PinNumber = -1;
 pin_number kInput6_PinNumber = -1;
 
@@ -230,18 +229,19 @@ pin_number kLED_USBRXPinNumber = 72;
 pin_number kLED_USBTXPinNumber = 73;
 
 
-pin_number kOutput1_PinNumber  = 8; // Valve 1
-pin_number kOutput2_PinNumber  = 7; // Valve 2
-pin_number kOutput3_PinNumber  = 6; // Valve 3
-pin_number kOutput4_PinNumber  = 5; // Valve 4
-pin_number kOutput5_PinNumber  = 4; // Valve 5
-pin_number kOutput6_PinNumber  = 3; // Valve 6
-pin_number kOutput7_PinNumber  = 46; // MS0_M1
-pin_number kOutput8_PinNumber  = 45; // MS1_M1
-pin_number kOutput9_PinNumber  = 44; // MS2_M1
-pin_number kOutput10_PinNumber = 51; // MS0_M3
-pin_number kOutput11_PinNumber = 50; // MS1_M3
-pin_number kOutput12_PinNumber = 49; // MS2_M3
+pin_number kOutput1_PinNumber  = 36; // DO_1: Extruder1_PWM
+pin_number kOutput2_PinNumber  = 39; // DO_2: Extruder2_PWM
+pin_number kOutput3_PinNumber  = 38; // DO_3: Fan1A_PWM
+pin_number kOutput4_PinNumber  = 41; // DO_4: Fan1B_PWM
+pin_number kOutput5_PinNumber  = 40; // DO_5: Fan2A_PWM
+pin_number kOutput6_PinNumber  = 43; // 135;     // See Spindle Enable
+pin_number kOutput7_PinNumber  = 42; // 136;     // See Spindle Direction
+pin_number kOutput8_PinNumber  = 45; // 137;     // See Coolant Enable
+pin_number kOutput9_PinNumber  = 44; // <unassigned, available out>
+pin_number kOutput10_PinNumber = 47; // DO_10: Fan2B_PWM
+
+pin_number kOutput11_PinNumber = -1; // DO_11: Heted Bed FET
+pin_number kOutput12_PinNumber = -1; // DO_12: Indicator_LED
 pin_number kOutput13_PinNumber = -1; // 142;
 pin_number kOutput14_PinNumber = -1; // 143;
 pin_number kOutput15_PinNumber = -1; // 144;

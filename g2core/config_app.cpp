@@ -556,6 +556,11 @@ const cfgItem_t cfgArray[] = {
   { "m","m10",  _i0, 2, pwm_motor_print_out, pwm_motor_get_value, pwm_motor_set_value, nullptr, 0 },
 #endif
 
+#ifdef CHECK_ENCODERS
+  { "eac","eac1",  _i0, 2, encoder_check_print_out, encoder_check_get_value, encoder_check_set_value, nullptr, 0 },
+  { "eac","eac2",  _i0, 2, encoder_check_print_out, encoder_check_get_value, encoder_check_set_value, nullptr, 0 },
+#endif // check encoders
+
     // PWM settings
     { "p1","p1frq",_fip, 0, pwm_print_p1frq, get_flt, pwm_set_pwm,(float *)&pwm.c[PWM_1].frequency,    P1_PWM_FREQUENCY },
     { "p1","p1csl",_fip, 0, pwm_print_p1csl, get_flt, pwm_set_pwm,(float *)&pwm.c[PWM_1].cw_speed_lo,  P1_CW_SPEED_LO },

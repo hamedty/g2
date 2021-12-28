@@ -75,7 +75,7 @@
  *	results off by as much as a millimeter if not corrected.
  *
  *	Note: Going to doubles (from floats) would reduce the errors but not eliminate
- *	them altogether. 
+ *	them altogether.
  *
  *	*** Applying the error term for error correction ***
  *
@@ -133,5 +133,12 @@ float en_read_encoder(uint8_t motor);
 void en_take_encoder_snapshot();
 float en_get_encoder_snapshot_steps(uint8_t motor);
 float* en_get_encoder_snapshot_vector();
+
+#ifdef CHECK_ENCODERS
+void    encoder_check_print_out(nvObj_t *nv);
+stat_t  encoder_check_get_value(nvObj_t *nv);
+stat_t  encoder_check_set_value(nvObj_t *nv);
+#endif // check encoders
+
 
 #endif  // End of include guard: ENCODER_H_ONCE

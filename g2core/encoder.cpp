@@ -29,6 +29,7 @@
 #include "config.h"
 #include "encoder.h"
 #include "canonical_machine.h"  // needed for cm_panic() in assertions
+#include "controller.h"
 
 /**** Allocate Structures ****/
 
@@ -153,6 +154,123 @@ float* en_get_encoder_snapshot_vector() { return (en.snapshot); }
  * TEXT MODE SUPPORT
  * Functions to print variables from the cfgArray table
  ***********************************************************************************/
+
+ #ifdef CHECK_ENCODERS
+
+typedef struct encoder_check_config {
+  uint8_t motor_index;
+  uint8_t motor_factor;
+  uint8_t encoder_index;
+  uint8_t encoder_factor;
+  uint32_t threshold;
+} encoder_check_config_t;
+
+
+#ifdef CHECK_ENCODER_CONFIG_STATION
+/* station:
+ 'tr': 8,  # travel per rev = 8mm
+ 'mi': 2,  # microstep = 2
+ 1 rev = 400 step = 8 mm
+ 1 mm = 300 enc
+ ----------------
+ 400 step = 2400 enc
+ 1 step = 6 enc
+ x 6 = x 2 + x 4
+*/
+#define ENCODER_COUNT 1
+encoder_check_config_t encoder_check_configs[ENCODER_COUNT] = {
+  { 2, 6, 0, 1, 0},
+};
+#endif
+
+#ifdef CHECK_ENCODER_CONFIG_ROBOT
+/* robot:
+
+(1, {
+    'tr': 20,  # travel per rev = 20mm
+    'mi': 2,
+}),
+(2, {
+    'tr': 20,  # travel per rev = 20mm
+    'mi': 4,
+}),
+
+  'posx': ['enc2', 120.0, 1.0, 5.0],
+  'posy': ['enc1', 120.0, 1.0, 5.0],
+
+  X:
+   1 rev = 400 step = 20 mm
+   1 mm = 120 enc
+   ----------------
+   400 step = 2400 enc
+   1 step = 6 enc
+
+   Y:
+    1 rev = 800 step = 20 mm
+    1 mm = 120 enc
+    ----------------
+    800 step = 2400 enc
+    1 step = 3 enc
+
+
+*/
+#define ENCODER_COUNT 2
+encoder_check_config_t encoder_check_configs[ENCODER_COUNT] = {
+  { 0, 6, 1, 1, 0}, // X
+  { 1, 3, 0, 1, 0}, // Y
+};
+#endif
+
+
+stat_t cm_check_encoder(void) {
+  for (uint8_t i = 0; i < ENCODER_COUNT; i++) {
+    encoder_check_config_t *c = &encoder_check_configs[i];
+
+    if (c->threshold == 0) continue; // disable enable
+
+    int32_t encoder_values[2] = {(int32_t) REG_TC0_CV0, (int32_t) REG_TC2_CV0};
+    int32_t encoder_value = encoder_values[c->encoder_index];
+    int32_t motor_value = en.en[c->motor_index].encoder_steps;
+
+
+    motor_value = motor_value * c->motor_factor;
+    encoder_value = encoder_value * c->encoder_factor;
+    uint32_t error = abs(motor_value - encoder_value);
+
+    if (error > c->threshold) {
+        cm_request_feedhold(FEEDHOLD_TYPE_ACTIONS, FEEDHOLD_EXIT_CYCLE);
+    }
+  }
+  return STAT_OK;
+}
+
+void encoder_check_print_out(nvObj_t *nv) {
+  // sprintf(cs.out_buf, "ena%s: %5d\n", nv->token, (int)nv->value_int);
+  // xio_writeline(cs.out_buf);
+};
+
+stat_t  encoder_check_get_value(nvObj_t *nv) {
+  // // uint8_t output_num = _io(nv->index);
+  //   nv->valuetype = TYPE_FLOAT;
+  //   nv->precision = 2;
+  //   nv->value_flt = 50;
+    return STAT_OK;
+};
+stat_t  encoder_check_set_value(nvObj_t *nv) {
+
+  // get encoder index
+  const char *ptr = cfgArray[nv->index].token;
+  ptr = ptr + 3;
+  uint8_t index = atoi(ptr) - 1;
+
+  if (index >= ENCODER_COUNT) return STAT_OK;
+  encoder_check_configs[index].threshold = (uint32_t)nv->value_int;
+
+  return STAT_OK;
+}
+
+
+#endif // check encoders
 
 #ifdef __TEXT_MODE
 

@@ -176,6 +176,11 @@ static void _controller_HSM()
 #endif
 #endif
 
+#ifdef CHECK_ENCODERS
+    DISPATCH(cm_check_encoder());               // Check encoders by Hamed
+#endif // check encoders
+
+
     DISPATCH(cm_homing_cycle_callback());       // homing cycle operation (G28.2)
     DISPATCH(cm_probing_cycle_callback());      // probing cycle operation (G38.2)
     DISPATCH(cm_jogging_cycle_callback());      // jog cycle operation
