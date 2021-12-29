@@ -36,13 +36,25 @@ void setup_pwm_motors() {
     m->reg->PIO_OER  = m->reg_mask; // Set to OUTPUT
     m->reg->PIO_PUDR = m->reg_mask; // Disable the pull up resistor
   }
+
+#ifdef PM_FEEDER
+  // setup holder conveyor motor direction controller
+  // set C9 as output
+  REG_PIOC_PER = 1 << 9;
+  REG_PIOC_OER = 1 << 9;
+  REG_PIOC_PUDR = 1 << 9;
+#endif
 }
+
+uint32_t no_holder_counter = 0;
 
 void pwm_motors_step() {
 
 #if PWM_MOTORS_ARRANGEMENT == 1
   bool motors_blocked_by_sensor = sensor_blocking_data.blocked_out;
   // Sensor = in4 - D27 - PD2 - active low
+  // holder exists -> sensor_blocked = true -> eventually motors_blocked_by_sensor = true
+  // lack of holder -> sensor_blocked = false ....
   bool sensor_blocked = (REG_PIOD_PDSR & (1 << 2)) == 0;
 
   // 1- hysthersis calcs
@@ -72,6 +84,23 @@ void pwm_motors_step() {
     }
   }
   sensor_blocking_data.blocked_out = motors_blocked_by_sensor;
+
+  // 1.1 empty_counter -> to reverse the motor
+  if (sensor_blocked) {
+    no_holder_counter = 0;
+    // motor run in forward
+    REG_PIOC_CODR = 1 << 9;
+  }
+  else {
+    no_holder_counter++;
+  }
+  // run motor in reverse. it will resume in special functions
+  if (no_holder_counter > 200000) {
+    no_holder_counter = 0;
+    // motor run in rev
+    REG_PIOC_SODR = 1 << 9;
+  }
+
 #else
   bool motors_blocked_by_sensor = false;
 #endif
