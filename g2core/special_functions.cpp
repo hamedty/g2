@@ -5,6 +5,7 @@
 #include "pwm_motor.h"
 
 #ifdef SPECIAL_FUNCTIONS
+uint32_t holder_gate_delay_counter = 0;
 void holder_gate_contorl(void)  {
   /*
   gate: out7 -> 60 = PA3
@@ -13,18 +14,16 @@ void holder_gate_contorl(void)  {
   motors: m2, m3
   */
   // if gate not open return (PA3)
-  if ((REG_PIOA_PDSR & (1 << 3)) == 0) return;
+  if ((REG_PIOA_PDSR & (1 << 3)) == 0) { holder_gate_delay_counter = 0; return;}
 
   // if microswitch not hit return (PA15)
-  if ((REG_PIOA_PDSR & (1 << 15)) != 0) return;
+  if ((REG_PIOA_PDSR & (1 << 15)) != 0) { holder_gate_delay_counter = 0; return;}
 
+  holder_gate_delay_counter++;
   // close gate (PA3 - to normal condition value = 0)
-
   // open microswitch lock (PA4), slow down motors
   REG_PIOA_CODR = 1 << 3;
   REG_PIOA_SODR = 1 << 4;
-  pwm_motor_set_value_simple(1, 30);
-  pwm_motor_set_value_simple(2, 30);
   return;
 }
 
