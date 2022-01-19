@@ -204,12 +204,12 @@ pin_number kInput4_PinNumber = 27;
 pin_number kInput5_PinNumber = 24;
 pin_number kInput6_PinNumber = 25;
 
-pin_number kInput7_PinNumber  = 22;
-pin_number kInput8_PinNumber  = 23;
-pin_number kInput9_PinNumber  = 21;
-pin_number kInput10_PinNumber = 20;
-pin_number kInput11_PinNumber = 19;
-pin_number kInput12_PinNumber = 18;
+pin_number kInput7_PinNumber  = 4; // S2 = D4 = C26
+pin_number kInput8_PinNumber  = -1;
+pin_number kInput9_PinNumber  = -1;
+pin_number kInput10_PinNumber = -1;
+pin_number kInput11_PinNumber = -1;
+pin_number kInput12_PinNumber = -1;
 
 pin_number kSpindle_EnablePinNumber = -1;
 pin_number kSpindle_DirPinNumber    = -1; // 13;

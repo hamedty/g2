@@ -215,6 +215,12 @@ struct ioDigitalInputExt {
                 cm->safety_interlock_reengaged = ext_pin_number;
             }
         }
+        #ifdef PM_FEEDER // feeder specific
+        if ((ext_pin_number == 7) && (in->edge == INPUT_EDGE_LEADING)) { // cartridge hug sensor sets UDB
+          cfg.user_data_a[1] = 1; // UDA1 = 1
+        }
+        #endif
+
         sr_request_status_report(SR_REQUEST_TIMED);
     };
 };
