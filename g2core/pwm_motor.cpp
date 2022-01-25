@@ -52,10 +52,10 @@ void pwm_motors_step() {
 
 #if PWM_MOTORS_ARRANGEMENT == 1
   bool motors_blocked_by_sensor = sensor_blocking_data.blocked_out;
-  // Sensor = in4 - D27 - PD2 - active low
+  // Sensor = in8 - S3 = D5 = C25 - active low
   // holder exists -> sensor_blocked = true -> eventually motors_blocked_by_sensor = true
   // lack of holder -> sensor_blocked = false ....
-  bool sensor_blocked = (REG_PIOD_PDSR & (1 << 2)) == 0;
+  bool sensor_blocked = (REG_PIOC_PDSR & (1 << 25)) == 0;
 
   // 1- hysthersis calcs
   if (motors_blocked_by_sensor) {

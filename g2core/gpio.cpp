@@ -126,6 +126,14 @@ struct ioDigitalInputExt {
         // return if no change in state
         bool pin_value = (bool)input_pin;
         int8_t pin_value_corrected = (pin_value ^ ((int)in->mode ^ 1));    // correct for NO or NC mode
+
+        #ifdef PM_FEEDER // feeder specific
+        if ((ext_pin_number == 7) && (pin_value_corrected == 1)) { // cartridge hug sensor sets UDB
+          cfg.user_data_a[1] = 1; // UDA1 = 1
+        }
+        #endif
+
+
         if (in->state == (ioState)pin_value_corrected) {
             return;
         }
@@ -215,11 +223,6 @@ struct ioDigitalInputExt {
                 cm->safety_interlock_reengaged = ext_pin_number;
             }
         }
-        #ifdef PM_FEEDER // feeder specific
-        if ((ext_pin_number == 7) && (in->edge == INPUT_EDGE_LEADING)) { // cartridge hug sensor sets UDB
-          cfg.user_data_a[1] = 1; // UDA1 = 1
-        }
-        #endif
 
         sr_request_status_report(SR_REQUEST_TIMED);
     };
@@ -601,6 +604,11 @@ stat_t io_get_input(nvObj_t *nv)
     uint8_t index = _io(nv->index);
     nv->value_int = d_in[index].state;
     #ifdef READ_IN5_DIRECTLY
+    if (index == 3) {
+      // in4 - 27 - PD2
+      nv->value_int = (REG_PIOD_PDSR & (1 << 2)) == 0;
+    }
+
     if (index == 4) {
       // in5 - 24 - A15
       nv->value_int = (REG_PIOA_PDSR & (1 << 15)) == 0;
