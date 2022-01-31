@@ -206,7 +206,7 @@ pin_number kInput6_PinNumber = 25;
 
 pin_number kInput7_PinNumber  = 4; // S2 = D4 = C26
 pin_number kInput8_PinNumber  = 5; // S3 = D5 = C25
-pin_number kInput9_PinNumber  = -1;
+pin_number kInput9_PinNumber  = 7; // S5 = D7 = 
 pin_number kInput10_PinNumber = -1;
 pin_number kInput11_PinNumber = -1;
 pin_number kInput12_PinNumber = -1;

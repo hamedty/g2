@@ -43,10 +43,32 @@ void holder_motor_direction() {
   }
 }
 
+#define HOLDER_LOW_Q_MAX 40000
+#define HOLDER_LOW_Q_MIN 1
+void holder_low_q_detection () {
+  // holder line = in4 = D27 = PD2
+  bool no_holder = (REG_PIOD_PDSR & (1 << 2));
+  if (no_holder) {
+    if (cfg.user_data_a[2] > HOLDER_LOW_Q_MAX) {
+      cfg.user_data_a[2] = HOLDER_LOW_Q_MAX;
+    } else {
+      cfg.user_data_a[2]++;
+    }
+  } else {
+    if (cfg.user_data_a[2] < HOLDER_LOW_Q_MIN) {
+      cfg.user_data_a[2] = HOLDER_LOW_Q_MIN;
+    } else {
+      cfg.user_data_a[2]--;
+    }
+  }
+
+}
+
 stat_t cm_special_function(void) {
 #ifdef PM_FEEDER
   holder_gate_contorl();
   holder_motor_direction();
+  holder_low_q_detection();
 #endif // PM_FEEDER
 
   return STAT_OK;

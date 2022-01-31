@@ -74,6 +74,7 @@ void pwm_motors_step() {
     if (sensor_blocked) {
       sensor_blocking_data.blocked_counter++;
       if (sensor_blocking_data.blocked_counter >= BLOCKED_COUNTER_SMALL) {
+        REG_PIOC_SODR = 1 << 9; // Zand feature request
         motors_blocked_by_sensor = true;
         sensor_blocking_data.blocked_counter = BLOCKED_COUNTER_BIG;
       }
@@ -89,7 +90,7 @@ void pwm_motors_step() {
   if (sensor_blocked) {
     no_holder_counter = 0;
     // motor run in forward
-    REG_PIOC_CODR = 1 << 9;
+    // REG_PIOC_CODR = 1 << 9;
   }
   else {
     no_holder_counter++;
