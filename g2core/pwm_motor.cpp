@@ -147,7 +147,9 @@ void pwm_motor_print_out(nvObj_t *nv) {
 
 stat_t pwm_motor_get_value(nvObj_t *nv)
 {
-  nv->value_flt = 10;
+  // always return if sensor is blocked, if asked about {m1:n}
+  nv->valuetype = TYPE_INTEGER;
+  nv->value_int = sensor_blocking_data.blocked_out;
   return STAT_OK;
 }
 
