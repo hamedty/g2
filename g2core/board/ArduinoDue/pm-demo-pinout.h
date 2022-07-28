@@ -146,8 +146,8 @@ namespace Motate {
 
         pin_number kSocket1_SPISlaveSelectPinNumber = -1; // 10;
         pin_number kSocket1_InterruptPinNumber      = -1;
-        pin_number kSocket1_StepPinNumber           = 43;
-        pin_number kSocket1_DirPinNumber            = 42;
+        pin_number kSocket1_StepPinNumber           = 48;
+        pin_number kSocket1_DirPinNumber            = 47;
         pin_number kSocket1_EnablePinNumber         = -1;
         pin_number kSocket1_Microstep_0PinNumber    = -1;
         pin_number kSocket1_Microstep_1PinNumber    = -1;
@@ -156,8 +156,8 @@ namespace Motate {
 
         pin_number kSocket2_SPISlaveSelectPinNumber = -1;
         pin_number kSocket2_InterruptPinNumber      = -1;
-        pin_number kSocket2_StepPinNumber           = 48;
-        pin_number kSocket2_DirPinNumber            = 47;
+        pin_number kSocket2_StepPinNumber           = -1;
+        pin_number kSocket2_DirPinNumber            = -1;
         pin_number kSocket2_EnablePinNumber         = -1;
         pin_number kSocket2_Microstep_0PinNumber    = -1;
         pin_number kSocket2_Microstep_1PinNumber    = -1;
@@ -166,8 +166,8 @@ namespace Motate {
 
         pin_number kSocket3_SPISlaveSelectPinNumber = -1;
         pin_number kSocket3_InterruptPinNumber      = -1;
-        pin_number kSocket3_StepPinNumber           = 35;
-        pin_number kSocket3_DirPinNumber            = 33;
+        pin_number kSocket3_StepPinNumber           = -1;
+        pin_number kSocket3_DirPinNumber            = -1;
         pin_number kSocket3_EnablePinNumber         = -1;
         pin_number kSocket3_Microstep_0PinNumber    = -1;
         pin_number kSocket3_Microstep_1PinNumber    = -1;
@@ -205,10 +205,10 @@ namespace Motate {
         pin_number kSocket6_VrefPinNumber           = -1;// 67; //PWMTimer<0>
 
 
-        pin_number kInput1_PinNumber = 28; // Home Z
-        pin_number kInput2_PinNumber = 26; // Some Gate Verification
-        pin_number kInput3_PinNumber = 24; // Gate Verification
-        pin_number kInput4_PinNumber = 22; // Not Used
+        pin_number kInput1_PinNumber = 24; // Microswitch
+        pin_number kInput2_PinNumber = -1;
+        pin_number kInput3_PinNumber = -1;
+        pin_number kInput4_PinNumber = -1;
         pin_number kInput5_PinNumber = -1;
         pin_number kInput6_PinNumber = -1;
 
@@ -233,22 +233,22 @@ namespace Motate {
         pin_number kLED_USBTXPinNumber = 73;
 
 
-        pin_number kOutput1_PinNumber  = 8;// Valve 1
-        pin_number kOutput2_PinNumber  = 7;// Valve 2
-        pin_number kOutput3_PinNumber  = 6;// Valve 3
-        pin_number kOutput4_PinNumber  = 5;// Valve 4
-        pin_number kOutput5_PinNumber  = 4;// Valve 5
-        pin_number kOutput6_PinNumber  = 3;// Valve 6 - Red Switch + LED
-        pin_number kOutput7_PinNumber  = 52;// ULN - Valve 7 - Green switch
-        pin_number kOutput8_PinNumber  = 68;// M1 Enable?
-        pin_number kOutput9_PinNumber  = 69;// M3 Enable?
-        pin_number kOutput10_PinNumber = -1; //
-        pin_number kOutput11_PinNumber = -1; //
-        pin_number kOutput12_PinNumber = -1; //
-        pin_number kOutput13_PinNumber = -1; // 142;
-        pin_number kOutput14_PinNumber = -1; // 143;
-        pin_number kOutput15_PinNumber = -1; // 144;
-        pin_number kOutput16_PinNumber = -1; // 145;
+        pin_number kOutput1_PinNumber  = 23; // LED
+        pin_number kOutput2_PinNumber  = -1;
+        pin_number kOutput3_PinNumber  = -1;
+        pin_number kOutput4_PinNumber  = -1;
+        pin_number kOutput5_PinNumber  = -1;
+        pin_number kOutput6_PinNumber  = -1;
+        pin_number kOutput7_PinNumber  = -1;
+        pin_number kOutput8_PinNumber  = -1;
+        pin_number kOutput9_PinNumber  = -1;
+        pin_number kOutput10_PinNumber = -1;
+        pin_number kOutput11_PinNumber = -1;
+        pin_number kOutput12_PinNumber = -1;
+        pin_number kOutput13_PinNumber = -1;
+        pin_number kOutput14_PinNumber = -1;
+        pin_number kOutput15_PinNumber = -1;
+        pin_number kOutput16_PinNumber = -1;
 
         pin_number kADC0_PinNumber  = -1;// Heated bed thermistor ADC
         pin_number kADC1_PinNumber  = -1;// Extruder1_ADC
