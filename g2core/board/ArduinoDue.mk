@@ -46,7 +46,6 @@ ifeq ("$(BOARD)","pm-rail")
     DEVICE_DEFINES += SETTINGS_FILE=${SETTINGS_FILE}
 endif
 
-
 ifeq ("$(BOARD)","pm-station")
     BASE_BOARD = g2core-due
     DEVICE_DEFINES += MOTATE_BOARD="pm-station"
@@ -62,6 +61,12 @@ endif
 ifeq ("$(BOARD)","pm-feeder-dosing")
     BASE_BOARD = g2core-due
     DEVICE_DEFINES += MOTATE_BOARD="pm-feeder-dosing"
+    DEVICE_DEFINES += SETTINGS_FILE=${SETTINGS_FILE}
+endif
+
+ifeq ("$(BOARD)","pm-demo")
+    BASE_BOARD = g2core-due
+    DEVICE_DEFINES += MOTATE_BOARD="pm-demo"
     DEVICE_DEFINES += SETTINGS_FILE=${SETTINGS_FILE}
 endif
 
