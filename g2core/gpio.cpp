@@ -315,7 +315,10 @@ static PWMLikeOutputPin<kOutput13_PinNumber>  output_13_pin;
 #endif
 #ifdef FEEDER
 static PWMLikeOutputPin<kOutput14_PinNumber>  output_14_pin;
+static PWMLikeOutputPin<kOutput15_PinNumber>  output_15_pin;
+static PWMLikeOutputPin<kOutput16_PinNumber>  output_16_pin;
 #endif
+
 // END generated
 
 /************************************************************************************
@@ -348,6 +351,8 @@ void gpio_init(void)
         output_13_pin.setFrequency(200000);
 #ifdef FEEDER
         output_14_pin.setFrequency(200000);
+        output_15_pin.setFrequency(200000);
+        output_16_pin.setFrequency(200000);
 #endif
         // END generated
 
@@ -397,6 +402,12 @@ void outputs_reset(void) {
 #endif
 #if D_OUT_CHANNELS >= 14
         if (d_out[14-1].mode != IO_MODE_DISABLED) { (output_14_pin   = (d_out[14-1].mode == IO_ACTIVE_LOW) ? 1.0 : 0.0); }
+#endif
+#if D_OUT_CHANNELS >= 15
+        if (d_out[15-1].mode != IO_MODE_DISABLED) { (output_15_pin   = (d_out[15-1].mode == IO_ACTIVE_LOW) ? 1.0 : 0.0); }
+#endif
+#if D_OUT_CHANNELS >= 16
+        if (d_out[16-1].mode != IO_MODE_DISABLED) { (output_16_pin   = (d_out[16-1].mode == IO_ACTIVE_LOW) ? 1.0 : 0.0); }
 #endif
 
 #ifdef PM_STATION
@@ -536,6 +547,8 @@ stat_t gpio_set_output(uint8_t output_num, float value) {
                 case 13:  { output_13_pin = value; } break;
 #ifdef FEEDER
                 case 14:  { output_14_pin = value; } break;
+                case 15:  { output_15_pin = value; } break;
+                case 16:  { output_16_pin = value; } break;
 #endif
                 // END generated
                 default: { value = 0; } // inactive
@@ -620,7 +633,7 @@ stat_t io_get_input(nvObj_t *nv)
         //
         uint8_t index = _io(nv->index);
         nv->value_int = d_in[index].state;
-    #ifdef READ_IN5_DIRECTLY
+    #ifdef READ_INS_DIRECTLY_FEEDER
         if (index == 3) {
                 // in4 - 27 - PD2
                 nv->value_int = (REG_PIOD_PDSR & (1 << 2)) == 0;
@@ -636,6 +649,14 @@ stat_t io_get_input(nvObj_t *nv)
                 nv->value_int = (REG_PIOD_PDSR & (1 << 0)) == 0;
         }
     #endif
+    #ifdef READ_INS_DIRECTLY_DOSING
+    if (index == 3) {
+            // in4 - 51 - PC12
+            nv->value_int = (REG_PIOC_PDSR & (1 << 12)) == 0;
+    }
+
+    #endif
+
         nv->valuetype = TYPE_INTEGER;
         return (STAT_OK);
 }
@@ -668,6 +689,8 @@ stat_t io_set_domode(nvObj_t *nv)           // output function
         case 13: if (output_13_pin.isNull()) { nv->value_int = IO_MODE_DISABLED; } break;
 #ifdef FEEDER
         case 14: if (output_14_pin.isNull()) { nv->value_int = IO_MODE_DISABLED; } break;
+        case 15: if (output_15_pin.isNull()) { nv->value_int = IO_MODE_DISABLED; } break;
+        case 16: if (output_16_pin.isNull()) { nv->value_int = IO_MODE_DISABLED; } break;
 #endif
         default: {}
         }
@@ -709,6 +732,8 @@ stat_t io_get_output(nvObj_t *nv)
                 case 13: { nv->value_flt = (float)output_13_pin; } break;
 #ifdef FEEDER
                 case 14: { nv->value_flt = (float)output_14_pin; } break;
+                case 15: { nv->value_flt = (float)output_15_pin; } break;
+                case 16: { nv->value_flt = (float)output_16_pin; } break;
 #endif
                 default: { nv->valuetype = TYPE_NULL;  }// reports back as NULL
                 }

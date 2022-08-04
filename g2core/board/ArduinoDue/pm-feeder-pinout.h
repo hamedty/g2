@@ -61,7 +61,7 @@
 #define ENC2_AVAILABLE 0
 #define CHECK_ENCODERS
 #define CHECK_ENCODER_CONFIG_FEEDER
-#define READ_IN5_DIRECTLY 1
+#define READ_INS_DIRECTLY_FEEDER 1
 #define PWM_MOTORS_AVAILABLE 1
 #define PWM_MOTORS_ARRANGEMENT 1
 #define FREQUENCY_PWM_MOTORS		30000UL		// 200,000 Hz means software interrupts will fire 5 uSec after being called
@@ -98,7 +98,7 @@
 #define OUTPUT12_PWM 0
 #define OUTPUT13_PWM 0
 
-#define FEEDER
+#define FEEDER 1
 
 namespace Motate {
 
@@ -206,7 +206,7 @@ pin_number kInput6_PinNumber = 25;
 
 pin_number kInput7_PinNumber  = 4; // S2 = D4 = C26
 pin_number kInput8_PinNumber  = 5; // S3 = D5 = C25
-pin_number kInput9_PinNumber  = 7; // S5 = D7 = 
+pin_number kInput9_PinNumber  = 7; // S5 = D7 =
 pin_number kInput10_PinNumber = -1;
 pin_number kInput11_PinNumber = -1;
 pin_number kInput12_PinNumber = -1;
@@ -238,8 +238,8 @@ pin_number kOutput11_PinNumber = 64; // V11
 pin_number kOutput12_PinNumber = 65; // V12
 pin_number kOutput13_PinNumber = 66; // V13
 pin_number kOutput14_PinNumber = 67; // V14
-pin_number kOutput15_PinNumber = -1; // V15
-pin_number kOutput16_PinNumber = -1; // V16
+pin_number kOutput15_PinNumber = 68; // V15
+pin_number kOutput16_PinNumber = 69; // V16
 
 pin_number kADC0_PinNumber  = -1;    // Heated bed thermistor ADC
 pin_number kADC1_PinNumber  = -1;    // Extruder1_ADC

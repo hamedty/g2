@@ -1044,6 +1044,14 @@
 #define DO14_MODE                   IO_ACTIVE_HIGH
 #endif
 
+#ifndef DO15_MODE
+#define DO15_MODE                   IO_ACTIVE_HIGH
+#endif
+
+#ifndef DO16_MODE
+#define DO16_MODE                   IO_ACTIVE_HIGH
+#endif
+
 // *** PWM Settings *** //
 
 #ifndef P1_PWM_FREQUENCY

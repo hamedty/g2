@@ -522,6 +522,8 @@ const cfgItem_t cfgArray[] = {
     { "do13","do13mo",_iip, 0, io_print_domode, io_get_domode, io_set_domode, nullptr, DO13_MODE },
 #ifdef FEEDER
     { "do14","do14mo",_iip, 0, io_print_domode, io_get_domode, io_set_domode, nullptr, DO14_MODE },
+    { "do15","do15mo",_iip, 0, io_print_domode, io_get_domode, io_set_domode, nullptr, DO15_MODE },
+    { "do16","do16mo",_iip, 0, io_print_domode, io_get_domode, io_set_domode, nullptr, DO16_MODE },
 #endif
 
     // Digital output state readers (default to non-active)
@@ -540,6 +542,8 @@ const cfgItem_t cfgArray[] = {
 #ifdef FEEDER
     { "out","out13", _i0, 2, io_print_out, io_get_output, io_set_output, nullptr, 0 },
     { "out","out14", _i0, 2, io_print_out, io_get_output, io_set_output, nullptr, 0 },
+    { "out","out15", _i0, 2, io_print_out, io_get_output, io_set_output, nullptr, 0 },
+    { "out","out16", _i0, 2, io_print_out, io_get_output, io_set_output, nullptr, 0 },
 #endif
 
 #if PWM_MOTORS_AVAILABLE
