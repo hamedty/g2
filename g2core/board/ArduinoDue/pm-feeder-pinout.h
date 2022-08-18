@@ -209,8 +209,8 @@ pin_number kInput7_PinNumber  = 6;
 pin_number kInput8_PinNumber  = 7;
 pin_number kInput9_PinNumber  = 8;
 pin_number kInput10_PinNumber = 9;
-pin_number kInput11_PinNumber = 11;
-pin_number kInput12_PinNumber = -1;
+pin_number kInput11_PinNumber = 3;
+pin_number kInput12_PinNumber = 4;
 
 pin_number kSpindle_EnablePinNumber = -1;
 pin_number kSpindle_DirPinNumber    = -1; // 13;

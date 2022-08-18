@@ -53,8 +53,6 @@ void setup_pwm_motors() {
 #endif
 }
 
-uint32_t no_holder_counter = 0;
-
 void pwm_motors_step() {
 
 #if PWM_MOTORS_ARRANGEMENT == 1
@@ -93,21 +91,6 @@ void pwm_motors_step() {
   }
   sensor_blocking_data.blocked_out = motors_blocked_by_sensor;
 
-  // 1.1 empty_counter -> to reverse the motor
-  if (sensor_blocked) {
-    no_holder_counter = 0;
-    // motor run in forward
-    // REG_PIOC_CODR = 1 << 9;
-  }
-  else {
-    no_holder_counter++;
-  }
-  // run motor in reverse. it will resume in special functions
-  if (no_holder_counter > 200000) {
-    no_holder_counter = 0;
-    // motor run in rev
-    REG_PIOC_SODR = 1 << 9;
-  }
 
 #else
   bool motors_blocked_by_sensor = false;

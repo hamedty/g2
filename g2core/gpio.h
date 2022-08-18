@@ -36,7 +36,7 @@
 #define INPUT_LOCKOUT_MS    10          // milliseconds to go dead after input firing
 
 #ifdef FEEDER
-#define D_IN_CHANNELS       11  // v9    // number of digital inputs supported
+#define D_IN_CHANNELS       12  // v9    // number of digital inputs supported
 #define D_OUT_CHANNELS	    16           // number of digital outputs supported
 #else
 #define D_IN_CHANNELS       9  // v9    // number of digital inputs supported

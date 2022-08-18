@@ -44,12 +44,32 @@ void holder_gate_contorl(void)  {
 
 }
 
+uint32_t no_holder_counter1 = 0;
 uint32_t holder_motor_in_reverse_counter1 = 0;
+uint32_t no_holder_counter2 = 0;
 uint32_t holder_motor_in_reverse_counter2 = 0;
 void holder_motor_direction() {
+  bool sensor_blocked;
   bool motor_in_reverse;
 
+  // D05	PC25	S3	holder air high level optical sensor 1
   // motor direction = Conveyor1 Motor M3 -> DIR 3 -> D49 -> PC14
+
+  sensor_blocked = (REG_PIOC_PDSR & (1 << 25)) == 0;
+
+  if (sensor_blocked) {
+    no_holder_counter1 = 0;
+  }
+  else {
+    no_holder_counter1++;
+  }
+  // run motor in reverse. it will resume in special functions
+  if (no_holder_counter1 > 100000) {
+    no_holder_counter1 = 0;
+    // motor run in rev
+    REG_PIOC_SODR = 1 << 14;
+  }
+
   motor_in_reverse = (REG_PIOC_PDSR & (1 << 14));
   if (!motor_in_reverse) {
     holder_motor_in_reverse_counter1 = 0;
@@ -61,7 +81,24 @@ void holder_motor_direction() {
     }
   }
 
+  // D10	PA28 + PC29	S8	holder air high level optical sensor 2
   // motor direction = Conveyor2 Motor M4 -> DIR 4 -> D47 -> PC16
+
+  sensor_blocked = (REG_PIOC_PDSR & (1 << 29)) == 0;
+
+  if (sensor_blocked) {
+    no_holder_counter2 = 0;
+  }
+  else {
+    no_holder_counter2++;
+  }
+  // run motor in reverse. it will resume in special functions
+  if (no_holder_counter2 > 100000) {
+    no_holder_counter2 = 0;
+    // motor run in rev
+    REG_PIOC_SODR = 1 << 16;
+  }
+
   motor_in_reverse = (REG_PIOC_PDSR & (1 << 16));
   if (!motor_in_reverse) {
     holder_motor_in_reverse_counter2 = 0;

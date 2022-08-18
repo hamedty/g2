@@ -130,9 +130,13 @@ struct ioDigitalInputExt {
                 int8_t pin_value_corrected = (pin_value ^ ((int)in->mode ^ 1)); // correct for NO or NC mode
 
         #ifdef PM_FEEDER // feeder specific
-                if ((ext_pin_number == 7) && (pin_value_corrected == 1)) { // cartridge hug sensor sets UDB
-                        cfg.user_data_a[1] = 1; // UDA1 = 1
+                if ((ext_pin_number == 11) && (pin_value_corrected == 1)) { // cartridge hug sensor sets UDB
+                        cfg.user_data_a[1] |= 1; // UDA1 |= 1
                 }
+                if ((ext_pin_number == 12) && (pin_value_corrected == 1)) { // cartridge hug sensor sets UDB
+                        cfg.user_data_a[1] |= 2; // UDA1 |= 2
+                }
+
         #endif
 
 
