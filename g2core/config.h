@@ -407,6 +407,13 @@ stat_t set_int32(nvObj_t *nv, int32_t &value, int32_t low, int32_t high);
 
 stat_t get_string(nvObj_t *nv, const char *str);
 
+#ifdef __DEBUG_REGS
+stat_t get_reg_pdsr_a(nvObj_t *nv);
+stat_t get_reg_pdsr_b(nvObj_t *nv);
+stat_t get_reg_pdsr_c(nvObj_t *nv);
+stat_t get_reg_pdsr_d(nvObj_t *nv);
+stat_t get_reg_value(nvObj_t *nv, uint32_t value);
+#endif
 // diagnostics
 void nv_dump_nv(nvObj_t *nv);
 

@@ -67,6 +67,7 @@
 #define FREQUENCY_PWM_MOTORS		30000UL		// 200,000 Hz means software interrupts will fire 5 uSec after being called
 
 #define SPECIAL_FUNCTIONS
+#define __DEBUG_REGS
 
 #define ADC0_AVAILABLE 0
 #define ADC1_AVAILABLE 0
@@ -138,8 +139,8 @@ pin_number kKinen_SyncPinNumber = -1;
 
 pin_number kSocket1_SPISlaveSelectPinNumber = -1;
 pin_number kSocket1_InterruptPinNumber      = -1;
-pin_number kSocket1_StepPinNumber           = 52;
-pin_number kSocket1_DirPinNumber            = 53;
+pin_number kSocket1_StepPinNumber           = 34;
+pin_number kSocket1_DirPinNumber            = 35;
 pin_number kSocket1_EnablePinNumber         = -1;
 pin_number kSocket1_Microstep_0PinNumber    = -1;
 pin_number kSocket1_Microstep_1PinNumber    = -1;
@@ -148,8 +149,8 @@ pin_number kSocket1_VrefPinNumber           = -1;
 
 pin_number kSocket2_SPISlaveSelectPinNumber = -1;
 pin_number kSocket2_InterruptPinNumber      = -1;
-pin_number kSocket2_StepPinNumber           = 50;
-pin_number kSocket2_DirPinNumber            = 51;
+pin_number kSocket2_StepPinNumber           = 32;
+pin_number kSocket2_DirPinNumber            = 33;
 pin_number kSocket2_EnablePinNumber         = -1;
 pin_number kSocket2_Microstep_0PinNumber    = -1;
 pin_number kSocket2_Microstep_1PinNumber    = -1;
@@ -158,8 +159,8 @@ pin_number kSocket2_VrefPinNumber           = -1;
 
 pin_number kSocket3_SPISlaveSelectPinNumber = -1;
 pin_number kSocket3_InterruptPinNumber      = -1;
-pin_number kSocket3_StepPinNumber           = 48;
-pin_number kSocket3_DirPinNumber            = 49;
+pin_number kSocket3_StepPinNumber           = 30;
+pin_number kSocket3_DirPinNumber            = 31;
 pin_number kSocket3_EnablePinNumber         = -1;
 pin_number kSocket3_Microstep_0PinNumber    = -1;
 pin_number kSocket3_Microstep_1PinNumber    = -1;
@@ -204,11 +205,11 @@ pin_number kInput4_PinNumber = 27;
 pin_number kInput5_PinNumber = 24;
 pin_number kInput6_PinNumber = 25;
 
-pin_number kInput7_PinNumber  = 4; // S2 = D4 = C26
-pin_number kInput8_PinNumber  = 5; // S3 = D5 = C25
-pin_number kInput9_PinNumber  = 7; // S5 = D7 =
-pin_number kInput10_PinNumber = -1;
-pin_number kInput11_PinNumber = -1;
+pin_number kInput7_PinNumber  = 6;
+pin_number kInput8_PinNumber  = 7;
+pin_number kInput9_PinNumber  = 8;
+pin_number kInput10_PinNumber = 9;
+pin_number kInput11_PinNumber = 11;
 pin_number kInput12_PinNumber = -1;
 
 pin_number kSpindle_EnablePinNumber = -1;
@@ -225,8 +226,8 @@ pin_number kLED_USBRXPinNumber = 72;
 pin_number kLED_USBTXPinNumber = 73;
 
 pin_number kOutput1_PinNumber  = 59; // V01
-pin_number kOutput2_PinNumber  = 58; // V02
-pin_number kOutput3_PinNumber  = -1; // 57; // V03 - Holder sequencer
+pin_number kOutput2_PinNumber  = -1; // 58; // V02 - Holder sequencer 1
+pin_number kOutput3_PinNumber  = -1; // 57; // V03 - Holder sequencer 2
 pin_number kOutput4_PinNumber  = 56; // V04
 pin_number kOutput5_PinNumber  = 55; // V05
 pin_number kOutput6_PinNumber  = 54; // V06

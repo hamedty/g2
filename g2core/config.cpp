@@ -138,7 +138,7 @@ static void _set_defa(nvObj_t *nv, bool print)
             cfgArray[nv->index].set(nv);        // run the set method, nv_set(nv);
             if (cfgArray[nv->index].flags & F_PERSIST) {
                 nv_persist(nv);
-            }            
+            }
         }
     }
     sr_init_status_report();                    // reset status reports
@@ -150,7 +150,7 @@ static void _set_defa(nvObj_t *nv, bool print)
 stat_t set_defaults(nvObj_t *nv)
 {
     // failsafe. nv->value_int must be true or no action occurs
-    if (!nv->value_int) { 
+    if (!nv->value_int) {
         return(help_defa(nv));
     }
     _set_defa(nv, true);
@@ -230,6 +230,20 @@ stat_t get_data(nvObj_t *nv)
     return (STAT_OK);
 }
 
+#ifdef __DEBUG_REGS
+stat_t get_reg_pdsr_a(nvObj_t *nv) { return get_reg_value(nv, REG_PIOA_PDSR); }
+stat_t get_reg_pdsr_b(nvObj_t *nv) { return get_reg_value(nv, REG_PIOB_PDSR); }
+stat_t get_reg_pdsr_c(nvObj_t *nv) { return get_reg_value(nv, REG_PIOC_PDSR); }
+stat_t get_reg_pdsr_d(nvObj_t *nv) { return get_reg_value(nv, REG_PIOD_PDSR); }
+
+stat_t get_reg_value(nvObj_t *nv, uint32_t value) {
+  uint32_t *v = (uint32_t*)&nv->value_flt;
+  *v = value;
+  nv->valuetype = TYPE_DATA;
+  return STAT_OK;
+}
+#endif
+
 /* Generic sets()
  *  set_noop()  - set nothing and return OK
  *  set_nul()   - set nothing and return READ_ONLY error
@@ -251,10 +265,10 @@ stat_t set_nul(nvObj_t *nv) {
 
 stat_t set_ro(nvObj_t *nv) {
     if (strcmp(nv_body->token, "sr") == 0) { // hack. If setting an SR it doesn't fail
-        return (STAT_OK); 
+        return (STAT_OK);
     }
     nv->valuetype = TYPE_NULL;
-    return (STAT_PARAMETER_IS_READ_ONLY); 
+    return (STAT_PARAMETER_IS_READ_ONLY);
 }
 
 stat_t set_int32(nvObj_t *nv)
@@ -574,7 +588,7 @@ nvObj_t *nv_add_object(const char *token)       // add an object to the body usi
         if (nv->valuetype != TYPE_EMPTY) {
             if ((nv = nv->nx) == NULL) {        // not supposed to find a NULL; here for safety
                 return(NULL);
-            }            
+            }
             continue;
         }
         // load the index from the token or die trying
@@ -591,7 +605,7 @@ nvObj_t *nv_add_integer(const char *token, const int32_t value) // add an intege
     for (uint8_t i=0; i<NV_BODY_LEN; i++) {
         if (nv->valuetype != TYPE_EMPTY) {
             if ((nv = nv->nx) == NULL) {        // not supposed to find a NULL; here for safety
-                return(NULL); 
+                return(NULL);
             }
             continue;
         }
@@ -609,8 +623,8 @@ nvObj_t *nv_add_data(const char *token, const uint32_t value)// add an integer o
     for (uint8_t i=0; i<NV_BODY_LEN; i++) {
         if (nv->valuetype != TYPE_EMPTY) {
             if ((nv = nv->nx) == NULL) {        // not supposed to find a NULL; here for safety
-                 return(NULL); 
-            }            
+                 return(NULL);
+            }
             continue;
         }
         strcpy(nv->token, token);
@@ -629,7 +643,7 @@ nvObj_t *nv_add_float(const char *token, const float value)    // add a float ob
         if (nv->valuetype != TYPE_EMPTY) {
             if ((nv = nv->nx) == NULL) {        // not supposed to find a NULL; here for safety
                 return(NULL);
-            }            
+            }
             continue;
         }
         strncpy(nv->token, token, TOKEN_LEN);
@@ -646,8 +660,8 @@ nvObj_t *nv_add_string(const char *token, const char *string) // add a string ob
     for (uint8_t i=0; i<NV_BODY_LEN; i++) {
         if (nv->valuetype != TYPE_EMPTY) {
             if ((nv = nv->nx) == NULL) {        // not supposed to find a NULL; here for safety
-                return(NULL); 
-            }            
+                return(NULL);
+            }
             continue;
         }
         strncpy(nv->token, token, TOKEN_LEN);

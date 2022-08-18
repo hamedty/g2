@@ -557,7 +557,8 @@ const cfgItem_t cfgArray[] = {
   { "m","m7",  _i0, 2, pwm_motor_print_out, pwm_motor_get_value, pwm_motor_set_value, nullptr, 0 },
   { "m","m8",  _i0, 2, pwm_motor_print_out, pwm_motor_get_value, pwm_motor_set_value, nullptr, 0 },
   { "m","m9",  _i0, 2, pwm_motor_print_out, pwm_motor_get_value, pwm_motor_set_value, nullptr, 0 },
-  { "m","m10",  _i0, 2, pwm_motor_print_out, pwm_motor_get_value, pwm_motor_set_value, nullptr, 0 },
+  { "m","m11",  _i0, 2, pwm_motor_print_out, pwm_motor_get_value, pwm_motor_set_value, nullptr, 0 },
+  { "m","m12",  _i0, 2, pwm_motor_print_out, pwm_motor_get_value, pwm_motor_set_value, nullptr, 0 },
 #endif
 
 #ifdef CHECK_ENCODERS
@@ -839,6 +840,12 @@ const cfgItem_t cfgArray[] = {
     { "udd","udd3", _fip, 0, tx_print_int, get_data, set_data, &cfg.user_data_d[3], USER_DATA_D3 },
 #endif
 
+#ifdef __DEBUG_REGS
+    { "","pdsra", _fip, 0, tx_print_int, get_reg_pdsr_a, set_nul, nullptr, 0 },
+    { "","pdsrb", _fip, 0, tx_print_int, get_reg_pdsr_b, set_nul, nullptr, 0 },
+    { "","pdsrc", _fip, 0, tx_print_int, get_reg_pdsr_c, set_nul, nullptr, 0 },
+    { "","pdsrd", _fip, 0, tx_print_int, get_reg_pdsr_d, set_nul, nullptr, 0 },
+#endif
     // Tool table offsets
     { "tof","tofx",_fipc, 5, cm_print_cofs, cm_get_tof, cm_set_tof, nullptr, 0 },
     { "tof","tofy",_fipc, 5, cm_print_cofs, cm_get_tof, cm_set_tof, nullptr, 0 },

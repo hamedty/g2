@@ -9,16 +9,15 @@
 // Feeder
 #if PWM_MOTORS_ARRANGEMENT == 1
 pwm_motor_t pwm_motors[PWM_MOTOR_COUNT] = {
-  // { 0, 0, 0, PIOC, 1 << 17, false}, // M1 - Step 4 - PC17 - D46
-  { 0, 10000, 0, PIOA, 1 << 22, true}, // V3 - PA23 - D57 - Holder Jack
-  { 0, 0, 0, PIOC, 1 << 19, false}, // M2 - Step 5 - PC19 - D44
-  { 0, 0, 0, PIOA, 1 << 19, false}, // M3 - Step 6 - PA19 - D42
-  { 0, 0, 0, PIOC, 1 << 8, false}, // M4 - Step 7 - PC8 - D40
-  { 0, 0, 0, PIOC, 1 << 6, false}, // M5 - Step 8 - PC6 - D38
-  { 0, 0, 0, PIOC, 1 << 4, false}, // M6 - Step 9 - PC4 - D36
-  { 0, 0, 0, PIOC, 1 << 2, false}, // M7 - Step 10 - PC2 - D34
-  { 0, 0, 0, PIOD, 1 << 10, false}, // M8 - Step 11 - PD10 - D32
-  { 0, 0, 0, PIOD, 1 << 9, false}, // M9 - Step 12 - PD9 - D30
+  { 0, 10000, 0, PIOA, 1 << 6, true}, // M1 - V2 - D58 - PA6
+  { 0, 10000, 0, PIOA, 1 << 22, true}, // M2 - V3 - D57 - PA22
+  { 0, 0, 0, PIOC, 1 << 15, false}, // M3 - Step 3 - D48 - PC15
+  { 0, 0, 0, PIOC, 1 << 17, false}, // M4 - Step 4 - D46 - PC17
+  { 0, 0, 0, PIOC, 1 << 19, false}, // M5 - Step 5 - D44 - PC19
+  { 0, 0, 0, PIOA, 1 << 19, false}, // M6 - Step 6 - D42 - PA19
+  { 0, 0, 0, PIOC, 1 << 8, false}, // M7 - Step 7 - D40 - PC8
+  { 0, 0, 0, PIOC, 1 << 6, false}, // M8 - Step 8 - D38 - PC6
+  { 0, 0, 0, PIOC, 1 << 4, false}, // M9 - Step 9 - D36 - PC4
 };
 #else
 // Dosing Feeder
@@ -38,11 +37,19 @@ void setup_pwm_motors() {
   }
 
 #ifdef PM_FEEDER
-  // setup holder conveyor motor direction controller
-  // set C9 as output
-  REG_PIOC_PER = 1 << 9;
-  REG_PIOC_OER = 1 << 9;
-  REG_PIOC_PUDR = 1 << 9;
+  // setup holder conveyors motor direction controller
+  // M3, M4, Dir3, Dir4 - D49, D47
+  // set C14, C16 as output
+  REG_PIOC_PER = 1 << 14 | 1 << 16;
+  REG_PIOC_OER = 1 << 14 | 1 << 16;
+  REG_PIOC_PUDR = 1 << 14 | 1 << 16;
+
+  // in(s1): Cartridge Hug sensor 1 - PC28
+  // in(s2): Cartridge Hug sensor 2 - PC26
+  // in(s3): holder air high level optical sensor 1 - PC25
+  // in(s8): holder air high level optical sensor 2 - PC29
+  // PC25, PC26, PC28, PC29
+  // setup as input
 #endif
 }
 
@@ -154,16 +161,16 @@ stat_t pwm_motor_get_value(nvObj_t *nv)
 }
 
 stat_t pwm_motor_set_value_simple(uint8_t motor_index, uint32_t value) {
-  bool m10 = false;
+  bool m11_m12 = false;
 
-  if (motor_index > PWM_MOTOR_COUNT) return STAT_OK; // reserve == for M10
-  if (motor_index == 9) {motor_index = 0; m10 = true;} // translate M10 to M1
+  // if (motor_index > 11 || ) return STAT_OK; // bad motors
+  if (motor_index > 9) {motor_index -= 10; m11_m12 = true;} // translate M11, M12 to M1, M2
 
   pwm_motor *m = &pwm_motors[motor_index];
 
 #if PWM_MOTORS_ARRANGEMENT == 1
-  if(motor_index == 0) { //  1st motor
-    if (m10)
+  if(motor_index < 2) { //  M1, M2
+    if (m11_m12)
       m->x_counter_off = value;
     else
       m->x_counter_on = value;
