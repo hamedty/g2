@@ -3,8 +3,6 @@
 
 #include "pwm_motor.h"
 #include "gpio.h"
-#define BLOCKED_COUNTER_SMALL 20000
-#define BLOCKED_COUNTER_BIG   20000
 
 // Feeder
 #if PWM_MOTORS_ARRANGEMENT == 1
@@ -25,7 +23,6 @@ pwm_motor_t pwm_motors[PWM_MOTOR_COUNT] = {
   { 0, 0, 0, PIOB, 1 << 25, false} // Conveyor motor - D2 - B25
 };
 #endif
-sensor_blocking_data_t sensor_blocking_data = {0, false};
 
 void setup_pwm_motors() {
   // setup motors
@@ -54,57 +51,12 @@ void setup_pwm_motors() {
 }
 
 void pwm_motors_step() {
-
-#if PWM_MOTORS_ARRANGEMENT == 1
-  bool motors_blocked_by_sensor = sensor_blocking_data.blocked_out;
-  // Sensor = in8 - S3 = D5 = C25 - active low
-  // holder exists -> sensor_blocked = true -> eventually motors_blocked_by_sensor = true
-  // lack of holder -> sensor_blocked = false ....
-  bool sensor_blocked = (REG_PIOC_PDSR & (1 << 25)) == 0;
-
-  // 1- hysthersis calcs
-  if (motors_blocked_by_sensor) {
-    if (sensor_blocked) {
-      sensor_blocking_data.blocked_counter = BLOCKED_COUNTER_BIG;
-    }
-    else {
-      sensor_blocking_data.blocked_counter--;
-      if (sensor_blocking_data.blocked_counter <= 1) {
-        motors_blocked_by_sensor = false;
-        sensor_blocking_data.blocked_counter = 1;
-      }
-    }
-  }
-  else {
-    if (sensor_blocked) {
-      sensor_blocking_data.blocked_counter++;
-      if (sensor_blocking_data.blocked_counter >= BLOCKED_COUNTER_SMALL) {
-        REG_PIOC_SODR = 1 << 9; // Zand feature request
-        motors_blocked_by_sensor = true;
-        sensor_blocking_data.blocked_counter = BLOCKED_COUNTER_BIG;
-      }
-
-    }
-    else {
-      sensor_blocking_data.blocked_counter = 1;
-    }
-  }
-  sensor_blocking_data.blocked_out = motors_blocked_by_sensor;
-
-
-#else
-  bool motors_blocked_by_sensor = false;
-#endif
-
-  // 2- Motors step
   for (int i = 0; i < PWM_MOTOR_COUNT; i++) {
     pwm_motor *m = &pwm_motors[i];
     if (!m->x_counter_on) continue;
-    if (m->blockable) {
-      if (motors_blocked_by_sensor) {
-        m->reg->PIO_CODR = m->reg_mask; // clear
-        continue;
-      }
+    if (m->blocked) {
+      m->reg->PIO_CODR = m->reg_mask; // clear
+      continue;
     }
 
     if (m->counter == 0) {
@@ -138,8 +90,9 @@ void pwm_motor_print_out(nvObj_t *nv) {
 stat_t pwm_motor_get_value(nvObj_t *nv)
 {
   // always return if sensor is blocked, if asked about {m1:n}
+  uint8_t motor_index = nv_index_2_motor_index(nv->index);
   nv->valuetype = TYPE_INTEGER;
-  nv->value_int = sensor_blocking_data.blocked_out;
+  nv->value_int = pwm_motors[motor_index].blocked;
   return STAT_OK;
 }
 

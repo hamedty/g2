@@ -205,8 +205,8 @@ pin_number kSocket6_VrefPinNumber           = -1; // 67; //PWMTimer<0>
 
 pin_number kInput1_PinNumber = 48; // Optical - dosing existance on conveyor
 pin_number kInput2_PinNumber = 49; // Proximity - dosing direction on conveyor
-pin_number kInput3_PinNumber = 50; // Optical - Not Used
-pin_number kInput4_PinNumber = 51;
+pin_number kInput3_PinNumber = 50; // Optical - High Queue 1
+pin_number kInput4_PinNumber = 51; // Optical - High Queue 1
 pin_number kInput5_PinNumber = -1;
 pin_number kInput6_PinNumber = -1;
 
@@ -232,8 +232,8 @@ pin_number kLED_USBTXPinNumber = 73;
 
 
 pin_number kOutput1_PinNumber  = 47; // Channel Selector
-pin_number kOutput2_PinNumber  = 44; // Orientor 1
-pin_number kOutput3_PinNumber  = 45; // Orientor 2
+pin_number kOutput2_PinNumber  = 44; // Orientor
+pin_number kOutput3_PinNumber  = 45; // Blocker
 pin_number kOutput4_PinNumber  = 42; // Reserve
 pin_number kOutput5_PinNumber  = 43; // Reserve
 pin_number kOutput6_PinNumber  = 40; // Reserve

@@ -109,9 +109,83 @@ void holder_motor_direction() {
       REG_PIOC_CODR = 1 << 16;
     }
   }
-
-
 }
+
+
+typedef struct sensor_blocking_data {
+  Pio     *sensor_reg;
+  uint32_t sensor_reg_mask;
+  Pio     *conveyor_reg;
+  uint32_t conveyor_reg_mask;
+  int32_t  blocked_counter;
+  bool*    blocked_out;
+} sensor_blocking_data_t;
+
+sensor_blocking_data_t sensor_blocking_data_array[] = {
+  {
+    // sensor PC25
+    PIOC,
+    1<<25,
+    // conveyor direction M3 -> DIR 3 -> D49 -> PC14
+    PIOC,
+    1<<14,
+    0,
+    &pwm_motors[0].blocked
+  },
+  {
+    // sensor PC29
+    PIOC,
+    1<<29,
+    // conveyor direction M4 -> DIR 4 -> D47 -> PC16
+    PIOC,
+    1<<16,
+    0,
+    &pwm_motors[1].blocked
+  }
+};
+
+#define BLOCKED_COUNTER_SMALL 20000
+#define BLOCKED_COUNTER_BIG   20000
+
+void holder_high_q_detection(sensor_blocking_data_t* d) {
+
+  bool motor_blocked_by_sensor = *(d->blocked_out);
+  // Sensor = in8 - S3 = D5 = C25 - active low
+  // holder exists -> sensor_blocked = true -> eventually motor_blocked_by_sensor = true
+  // lack of holder -> sensor_blocked = false ....
+  bool sensor_blocked = (d->sensor_reg->PIO_PDSR & d->sensor_reg_mask) == 0;
+
+  // 1- hysthersis calcs
+  if (motor_blocked_by_sensor) {
+    if (sensor_blocked) {
+      d->blocked_counter = BLOCKED_COUNTER_BIG;
+    }
+    else {
+      d->blocked_counter--;
+      if (d->blocked_counter <= 1) {
+        motor_blocked_by_sensor = false;
+        d->blocked_counter = 1;
+      }
+    }
+  }
+  else {
+    if (sensor_blocked) {
+      d->blocked_counter++;
+      if (d->blocked_counter >= BLOCKED_COUNTER_SMALL) {
+        // REG_PIOC_SODR = 1 << 9; // Zand feature request
+        d->conveyor_reg->PIO_SODR = d->conveyor_reg_mask;
+        motor_blocked_by_sensor = true;
+        d->blocked_counter = BLOCKED_COUNTER_BIG;
+      }
+
+    }
+    else {
+      d->blocked_counter = 1;
+    }
+  }
+  *d->blocked_out = motor_blocked_by_sensor;
+}
+
 
 #define HOLDER_LOW_Q_MAX 40000
 #define HOLDER_LOW_Q_MIN 1
@@ -141,6 +215,8 @@ stat_t cm_special_function(void) {
 #ifdef PM_FEEDER
   holder_gate_contorl();
   holder_motor_direction();
+  holder_high_q_detection(&sensor_blocking_data_array[0]);
+  holder_high_q_detection(&sensor_blocking_data_array[1]);
   holder_low_q_detection();
 #endif // PM_FEEDER
 
