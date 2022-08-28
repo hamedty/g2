@@ -203,10 +203,10 @@ pin_number kSocket6_Microstep_2PinNumber    = -1;
 pin_number kSocket6_VrefPinNumber           = -1; // 67; //PWMTimer<0>
 
 
-pin_number kInput1_PinNumber = 48; // Optical - dosing existance on conveyor
-pin_number kInput2_PinNumber = 49; // Proximity - dosing direction on conveyor
-pin_number kInput3_PinNumber = 50; // Optical - High Queue 1
-pin_number kInput4_PinNumber = 51; // Optical - High Queue 1
+pin_number kInput1_PinNumber = 48; // Optical - dosing existance
+pin_number kInput2_PinNumber = 49; // Proximity - dosing orientor
+pin_number kInput3_PinNumber = 50; // Optical - dosing queue 1 high
+pin_number kInput4_PinNumber = 51; // Optical - dosing queue 2 high
 pin_number kInput5_PinNumber = -1;
 pin_number kInput6_PinNumber = -1;
 
@@ -231,11 +231,11 @@ pin_number kLED_USBRXPinNumber = 72;
 pin_number kLED_USBTXPinNumber = 73;
 
 
-pin_number kOutput1_PinNumber  = 47; // Channel Selector
-pin_number kOutput2_PinNumber  = 44; // Orientor
-pin_number kOutput3_PinNumber  = 45; // Blocker
+pin_number kOutput1_PinNumber  = 47; // channel selector
+pin_number kOutput2_PinNumber  = 44; // orientator
+pin_number kOutput3_PinNumber  = 45; // channel blocker
 pin_number kOutput4_PinNumber  = 42; // Reserve
-pin_number kOutput5_PinNumber  = 43; // Reserve
+pin_number kOutput5_PinNumber  = 43; // cascade motor
 pin_number kOutput6_PinNumber  = 40; // Reserve
 pin_number kOutput7_PinNumber  = 3; // small conveoyr motor direction
 pin_number kOutput8_PinNumber  = -1; // MS1_M1
