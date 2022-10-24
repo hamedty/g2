@@ -136,9 +136,16 @@ struct ioDigitalInputExt {
                 if ((ext_pin_number == 12) && (pin_value_corrected == 1)) { // cartridge hug sensor sets UDB
                         cfg.user_data_a[1] |= 2; // UDA1 |= 2
                 }
-
         #endif
 
+        #ifdef PM_DOSING // dosing specific
+                if ((ext_pin_number == 3) && (pin_value_corrected == 1)) { // positive edge of high queue sensor 1
+                        cfg.user_data_a[1]++;
+                }
+                if ((ext_pin_number == 4) && (pin_value_corrected == 1)) { // positive edge of high queue sensor 2
+                        cfg.user_data_a[2]++;
+                }
+        #endif
 
                 if (in->state == (ioState)pin_value_corrected) {
                         return;
@@ -248,6 +255,8 @@ ioDigitalInputExt<kInput9_PinNumber,  9> _din9;
 ioDigitalInputExt<kInput10_PinNumber, 10> _din10;
 ioDigitalInputExt<kInput11_PinNumber, 11> _din11;
 ioDigitalInputExt<kInput12_PinNumber, 12> _din12;
+
+// ioDigitalInputExt *_dins[] = [&_din1, &_din2, &_din3, &_din4, &_din5, &_din6, &_din7, &_din8, &_din9, &_din10, &_din11, &_din12]
 
 // Generated with:
 // perl -e 'for($i=1;$i<14;$i++) { print "#if OUTPUT${i}_PWM == 1\nstatic PWMOutputPin<kOutput${i}_PinNumber>  output_${i}_pin;\n#else\nstatic PWMLikeOutputPin<kOutput${i}_PinNumber>  output_${i}_pin;\n#endif\n";}'
@@ -654,11 +663,14 @@ stat_t io_get_input(nvObj_t *nv)
         }
     #endif
     #ifdef READ_INS_DIRECTLY_DOSING
-    if (index == 3) {
-            // in4 - 51 - PC12
-            nv->value_int = (REG_PIOC_PDSR & (1 << 12)) == 0;
-    }
-
+      bool value;
+      switch(index) {
+        case 0: value = (bool)_din1.input_pin; break;
+        case 1: value = (bool)_din2.input_pin; break;
+        case 2: value = (bool)_din3.input_pin; break;
+        case 3: value = (bool)_din4.input_pin; break;
+      }
+      nv->value_int = (!value);
     #endif
 
         nv->valuetype = TYPE_INTEGER;

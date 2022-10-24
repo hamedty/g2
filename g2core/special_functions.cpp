@@ -5,6 +5,7 @@
 #include "pwm_motor.h"
 
 #ifdef SPECIAL_FUNCTIONS
+int32_t holder_gate_timer = -1; // disabled
 void holder_gate_contorl(void)  {
   /*
   Gate 1
@@ -15,12 +16,23 @@ void holder_gate_contorl(void)  {
 
   // if "gate open" and "microswitch hit"
   if ((REG_PIOA_PDSR & (1 << 23)) &&
-      ((REG_PIOA_PDSR & (1 << 15)) == 0))
+      ((REG_PIOA_PDSR & (1 << 15)) == 0) &&
+      (holder_gate_timer == -1))
   {
-    // close gate to normal condition value = 0
+    // set timer to close gate
+    holder_gate_timer = cfg.user_data_b[0];
     // open microswitch lock
-    REG_PIOA_CODR = 1 << 23;
     REG_PIOA_SODR = 1 << 16;
+  }
+  if (holder_gate_timer > 0) {
+    holder_gate_timer --;
+  }
+  if (holder_gate_timer == 0) {
+    // close gate to normal condition value = 0
+
+    REG_PIOA_CODR = 1 << 23;
+
+    holder_gate_timer = -1; // disable timer
   }
 
 
@@ -43,6 +55,8 @@ void holder_gate_contorl(void)  {
 
 
 }
+#define NO_HOLDER_COUNTER 100000
+#define HOLDER_REVERSE_RUN 10000
 
 uint32_t no_holder_counter1 = 0;
 uint32_t holder_motor_in_reverse_counter1 = 0;
@@ -64,7 +78,7 @@ void holder_motor_direction() {
     no_holder_counter1++;
   }
   // run motor in reverse. it will resume in special functions
-  if (no_holder_counter1 > 100000) {
+  if (no_holder_counter1 > NO_HOLDER_COUNTER) {
     no_holder_counter1 = 0;
     // motor run in rev
     REG_PIOC_SODR = 1 << 14;
@@ -75,7 +89,7 @@ void holder_motor_direction() {
     holder_motor_in_reverse_counter1 = 0;
   } else {
     holder_motor_in_reverse_counter1++;
-    if (holder_motor_in_reverse_counter1 > 10000){
+    if (holder_motor_in_reverse_counter1 > HOLDER_REVERSE_RUN){
       // clear reverse
       REG_PIOC_CODR = 1 << 14;
     }
@@ -93,7 +107,7 @@ void holder_motor_direction() {
     no_holder_counter2++;
   }
   // run motor in reverse. it will resume in special functions
-  if (no_holder_counter2 > 100000) {
+  if (no_holder_counter2 > NO_HOLDER_COUNTER) {
     no_holder_counter2 = 0;
     // motor run in rev
     REG_PIOC_SODR = 1 << 16;
@@ -104,7 +118,7 @@ void holder_motor_direction() {
     holder_motor_in_reverse_counter2 = 0;
   } else {
     holder_motor_in_reverse_counter2++;
-    if (holder_motor_in_reverse_counter2 > 10000){
+    if (holder_motor_in_reverse_counter2 > HOLDER_REVERSE_RUN){
       // clear reverse
       REG_PIOC_CODR = 1 << 16;
     }
@@ -194,21 +208,22 @@ void holder_low_q_detection () {
 
   // holder line 1 = in4 = D27 = PD2
   no_holder = (REG_PIOD_PDSR & (1 << 2));
-  if (no_holder)
+  if (no_holder) {
     if (cfg.user_data_a[2] < HOLDER_LOW_Q_MAX)
-      cfg.user_data_a[2]++;
-  else
+      cfg.user_data_a[2]++;}
+  else{
     if (cfg.user_data_a[2] > HOLDER_LOW_Q_MIN)
-      cfg.user_data_a[2]--;
+      cfg.user_data_a[2]--;}
 
   // holder line 2 = in7(s4) = D6 = PC24
   no_holder = (REG_PIOC_PDSR & (1 << 24));
-  if (no_holder)
+  if (no_holder){
     if (cfg.user_data_a[3] < HOLDER_LOW_Q_MAX)
-      cfg.user_data_a[3]++;
-  else
+      cfg.user_data_a[3]++;}
+  else{
     if (cfg.user_data_a[3] > HOLDER_LOW_Q_MIN)
       cfg.user_data_a[3]--;
+    }
 }
 
 stat_t cm_special_function(void) {

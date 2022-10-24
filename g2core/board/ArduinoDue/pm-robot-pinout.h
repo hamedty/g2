@@ -201,8 +201,8 @@ pin_number kSocket6_Microstep_2PinNumber    = -1;
 pin_number kSocket6_VrefPinNumber           = -1; // 67; //PWMTimer<0>
 
 
-pin_number kInput1_PinNumber = 49;
-pin_number kInput2_PinNumber = 48;
+pin_number kInput1_PinNumber = 48;
+pin_number kInput2_PinNumber = 49;
 pin_number kInput3_PinNumber = 50;
 pin_number kInput4_PinNumber = 51;
 pin_number kInput5_PinNumber = -1;
