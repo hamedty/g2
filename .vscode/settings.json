@@ -1,0 +1,38 @@
+{
+    "files.associations": {
+        "cinttypes": "cpp",
+        "component_twi.h": "c",
+        "stdint.h": "c",
+        "core_cm0.h": "c",
+        "stm32f10x.h": "c",
+        "core_cm3.h": "c",
+        "sam3x8e.h": "c",
+        "thread": "c",
+        "stop_token": "c",
+        "cstddef": "cpp",
+        "array": "cpp",
+        "deque": "cpp",
+        "forward_list": "cpp",
+        "list": "cpp",
+        "string": "cpp",
+        "unordered_map": "cpp",
+        "unordered_set": "cpp",
+        "vector": "cpp",
+        "string_view": "cpp",
+        "rope": "cpp",
+        "slist": "cpp",
+        "initializer_list": "cpp",
+        "regex": "cpp",
+        "valarray": "cpp",
+        "ranges": "cpp",
+        "span": "cpp",
+        "core_cmfunc.h": "c",
+        "core_cminstr.h": "c",
+        "motatetimers.h": "c"
+    },
+    "workbench.colorCustomizations": {
+        "activityBar.background": "#561432",
+        "titleBar.activeBackground": "#781C45",
+        "titleBar.activeForeground": "#FEFBFD"
+    }
+}
